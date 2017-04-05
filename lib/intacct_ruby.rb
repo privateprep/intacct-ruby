@@ -1,5 +1,2 @@
 require 'intacct_ruby/version'
-
-module IntacctRuby
-  # Your code goes here...
-end
+require 'intacct_ruby/request'
