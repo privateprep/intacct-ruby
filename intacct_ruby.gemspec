@@ -13,6 +13,7 @@ Gem::Specification.new do |spec|
   spec.summary       = 'A Ruby wrapper for the Intacct API'
   spec.description   = 'Allows for multi-function API calls, the addition of' \
                        'custom fields, and more. All in an easy-to-use package!'
+  spec.homepage      = 'https://github.com/jzornow/intacct-ruby'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
