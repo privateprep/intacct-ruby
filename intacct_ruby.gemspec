@@ -26,10 +26,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '~> 1.13'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'nokogiri', '~> 1.6.8'
+  spec.add_development_dependency 'nokogiri', '~> 1.6', '>= 1.6.8'
   spec.add_development_dependency 'mocha', '~> 0.13.3'
-  spec.add_development_dependency 'pry-byebug', '~> 3.4.2'
+  spec.add_development_dependency 'pry-byebug', '~> 3.4', '>= 3.4.2'
 
-  spec.add_runtime_dependency 'builder', '~> 3.0.4'
-  spec.add_runtime_dependency 'figaro', '~> 1.1.1'
+  spec.add_runtime_dependency 'builder', '~> 3.0', '>= 3.0.4'
+  spec.add_runtime_dependency 'figaro', '~> 1.1', '>= 1.1.1'
 end
