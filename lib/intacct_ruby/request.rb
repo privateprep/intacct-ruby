@@ -36,7 +36,7 @@ module IntacctRuby
     attr_reader :request, :functions
 
     def timestamp
-      @timestamp ||= Time.now.to_s
+      @timestamp ||= Time.now.utc.to_s
     end
 
     def control_block
