@@ -1,8 +1,10 @@
 require 'spec_helper'
 require 'mocha/api'
-require 'intacct_ruby/request'
 require 'nokogiri'
 require 'figaro'
+
+require 'intacct_ruby/request'
+require 'intacct_ruby/response'
 
 include IntacctRuby
 
@@ -72,6 +74,20 @@ describe Request do
 
   context 'with no overrides' do
     before(:all) { generate_request_xml }
+
+    describe :send do
+      it 'sends request through the API' do
+        request = Request.new(*function_stubs)
+        response = mock('IntacctRuby::Response')
+
+        api_spy = mock('IntacctRuby::Api')
+        api_spy.expects(:send).with(request).returns(response)
+
+        Response.expects(:new).with(response)
+
+        request.send(api_spy)
+      end
+    end
 
     describe 'control block' do
       it 'contains values from environmental variables' do

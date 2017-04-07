@@ -1,7 +1,10 @@
 require 'builder'
+require 'intacct_ruby/api'
+require 'intacct_ruby/response'
 
 module IntacctRuby
   # An outgoing request to the Intacct API. Can have multiple functions.
+  # Complete with send method that gets (and wraps) response from Intacct.
   class Request
     DEFAULTS = {
       uniqueid: false,
@@ -29,6 +32,12 @@ module IntacctRuby
         control_block
         operation_block
       end
+    end
+
+    def send(api = nil)
+      api ||= Api.new
+
+      Response.new api.send(self)
     end
 
     private
