@@ -1,26 +1,20 @@
 require 'intacct_ruby/helpers/contacts_helper'
-require 'intacct_ruby/functions/base_function'
+require 'intacct_ruby/functions/customer_base_function'
 
 module IntacctRuby
   module Functions
     # function that creates customer instance
-    class CreateCustomer < BaseFunction
-      include ContactsHelper
-
+    class CreateCustomer < CustomerBaseFunction
       def initialize(attrs = {})
-        @attrs = attrs
-        super "create_customer_#{@attrs[:id]}"
+        super "create_customer_#{attrs[:id]}", attrs
       end
 
       def to_xml
         super do |xml|
           xml.create_customer do
             xml.customerid @attrs[:id]
-            xml.name full_name(@attrs)
-            xml.status @attrs[:status]
-            xml.contactinfo do
-              xml << contact_params(@attrs)
-            end
+
+            xml << customer_params
           end
         end
       end
