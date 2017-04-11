@@ -9,3 +9,5 @@ require 'intacct_ruby/functions/base_function'
 
 require 'intacct_ruby/functions/create_customer'
 require 'intacct_ruby/functions/update_customer'
+
+require 'intacct_ruby/functions/create_project'

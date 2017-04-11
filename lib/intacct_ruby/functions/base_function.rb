@@ -24,6 +24,21 @@ module IntacctRuby
       def timestamp
         @timestamp ||= Time.now.utc.to_s
       end
+
+      def custom_field_params(custom_fields)
+        xml = Builder::XmlMarkup.new
+
+        xml.customfields do
+          custom_fields.each do |name, value|
+            xml.customfield do
+              xml.customfieldname   name.to_s
+              xml.customfieldvalue  value.to_s
+            end
+          end
+        end
+
+        xml.target!
+      end
     end
   end
 end
