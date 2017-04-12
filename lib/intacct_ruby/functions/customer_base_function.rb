@@ -24,7 +24,7 @@ module IntacctRuby
         xml.name full_name(@attrs)
         xml.status @attrs[:status]
         xml.contactinfo do
-          xml << contact_params(@attrs)
+          xml << contact_params(@attrs, @attrs[:customerid], 'Customer')
         end
 
         xml.target!

@@ -9,10 +9,10 @@ describe IntacctRuby::Functions::CreateCustomer do
   describe :to_xml do
     let(:attrs) do
       {
+        customerid: '1',
         first_name: 'Han',
         last_name: 'Solo',
         type: 'Person',
-        id: '1',
         email1: 'han@solo.com',
         status: 'active'
       }
@@ -27,7 +27,7 @@ describe IntacctRuby::Functions::CreateCustomer do
 
     it 'contains expected customer params' do
       {
-        customerid: attrs[:id],
+        customerid: attrs[:customerid],
         name: full_name(attrs),
         status: attrs[:status]
       }.each do |parameter_key, expected_value|
@@ -40,7 +40,9 @@ describe IntacctRuby::Functions::CreateCustomer do
     end
 
     it 'contains expected contactinfo for customer' do
-      expected_value = Nokogiri::XML(contact_params(attrs))
+      params = contact_params(attrs, attrs[:customerid], 'Customer')
+
+      expected_value = Nokogiri::XML(params)
                                .xpath('contact')
                                .to_s
 

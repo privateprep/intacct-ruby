@@ -23,7 +23,7 @@ describe IntacctRuby::ContactsHelper do
         id: '1'
       }
 
-      expect(contactname(attrs))
+      expect(contactname(full_name(attrs), attrs[:id], attrs[:person_type]))
         .to eq "#{attrs[:first_name]} #{attrs[:last_name]} " \
                "(#{attrs[:person_type]} \##{attrs[:id]})"
     end
@@ -40,11 +40,15 @@ describe IntacctRuby::ContactsHelper do
       }
     end
 
-    let(:output) { Nokogiri::XML contact_params(attrs) }
+    let(:person_type) { 'Space Outlaw' }
+    let(:params) { contact_params(attrs, attrs[:id], person_type) }
+    let(:output) { Nokogiri::XML params }
 
     it 'contains expected params' do
+      name = full_name(attrs)
+
       {
-        contactname: contactname(attrs),
+        contactname: contactname(name, attrs[:id], attrs[:person_type]),
         printas: full_name(attrs),
         firstname: attrs[:first_name],
         lastname: attrs[:last_name],

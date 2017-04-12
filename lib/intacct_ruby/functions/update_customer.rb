@@ -10,7 +10,7 @@ module IntacctRuby
 
       def to_xml
         super do |xml|
-          xml.update_customer customerid: @attrs[:id] do
+          xml.update_customer customerid: @attrs[:customerid] do
             xml << customer_params
           end
         end

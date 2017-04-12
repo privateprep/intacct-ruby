@@ -12,7 +12,7 @@ module IntacctRuby
       def to_xml
         super do |xml|
           xml.create_customer do
-            xml.customerid @attrs[:id]
+            xml.customerid @attrs[:customerid]
 
             xml << customer_params
           end

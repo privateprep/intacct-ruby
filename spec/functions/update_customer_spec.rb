@@ -11,7 +11,7 @@ describe IntacctRuby::Functions::UpdateCustomer do
         first_name: 'Han',
         last_name: 'Solo',
         type: 'Person',
-        id: '1',
+        customerid: '1',
         email1: 'han@solo.com',
         status: 'active'
       }
@@ -35,7 +35,7 @@ describe IntacctRuby::Functions::UpdateCustomer do
                         .first
                         .attributes['customerid']
 
-      expect(parameter.value).to eq attrs[:id]
+      expect(parameter.value).to eq attrs[:customerid]
     end
   end
 end
