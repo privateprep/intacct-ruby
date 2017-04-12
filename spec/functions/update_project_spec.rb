@@ -9,6 +9,11 @@ describe IntacctRuby::Functions::UpdateProject do
 
   it_behaves_like 'a project function', 'update_project', function_xml
 
+  it 'should have a controlid that describes the action' do
+    expect(control_id_from(function_xml))
+      .to include "update_project_#{project_attributes[:projectid]}"
+  end
+
   it 'sends projectid as key in function header' do
     attributes = project_attributes
 
