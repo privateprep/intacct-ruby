@@ -1,63 +1,33 @@
 require 'nokogiri'
 
+require 'functions/function_spec_helper'
+require 'functions/customer_function_examples'
+
 require 'intacct_ruby/functions/create_customer'
-require 'intacct_ruby/helpers/contacts_helper'
 
 describe IntacctRuby::Functions::CreateCustomer do
-  include IntacctRuby::ContactsHelper
+  function_xml = generate_function_xml(described_class, customer_attributes)
 
-  describe :to_xml do
-    let(:attrs) do
-      {
-        customerid: '1',
-        first_name: 'Han',
-        last_name: 'Solo',
-        type: 'Person',
-        email1: 'han@solo.com',
-        status: 'active'
-      }
-    end
+  it_behaves_like 'a customer function', 'create_customer', function_xml
 
-    let(:output) do
-      request = IntacctRuby::Functions::CreateCustomer.new(attrs)
-      Nokogiri::XML(request.to_xml)
-    end
+  it 'should have a controlid that describes the action' do
+    parameter = function_xml.xpath('/function')
+                            .first
+                            .attributes['controlid']
 
-    let(:xml_base) { '/function/create_customer' }
+    expect(parameter.value)
+      .to eq "create_customer_#{customer_attributes[:customerid]}"
+  end
 
-    it 'should have a controlid that describes the action' do
-      parameter = output.xpath('/function')
-                        .first
-                        .attributes['controlid']
+  it 'sends customerid param in body' do
+    param_path = "#{function_base_path('create_customer')}/customerid"
+    param = function_xml.xpath(param_path)
 
-      expect(parameter.value).to eq "create_customer_#{attrs[:customerid]}"
-    end
+    expected_value = customer_attributes[:customerid]
 
-    it 'contains expected customer params' do
-      {
-        customerid: attrs[:customerid],
-        name: full_name(attrs),
-        status: attrs[:status]
-      }.each do |parameter_key, expected_value|
-        parameter = output.xpath("#{xml_base}/#{parameter_key}")
-        expect(parameter.text)
-          .to eq(expected_value),
-              "Value of #{parameter_key} did not match. " \
-              "Expected \"#{expected_value}\", got \"#{parameter.text}\""
-      end
-    end
-
-    it 'contains expected contactinfo for customer' do
-      params = contact_params(attrs, attrs[:customerid], 'Customer')
-
-      expected_value = Nokogiri::XML(params)
-                               .xpath('contact')
-                               .to_s
-
-      actual_value = output.xpath("#{xml_base}/contactinfo/contact")
-                           .to_s
-
-      expect(actual_value).to eq expected_value
-    end
+    expect(param.text).to eq(expected_value),
+                          "Value of \"customerid\" did not match. " \
+                          "Expected \"#{expected_value}\", got " \
+                          "\"#{param.text}\""
   end
 end
