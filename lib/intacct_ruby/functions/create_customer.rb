@@ -6,7 +6,7 @@ module IntacctRuby
     # function that creates customer instance
     class CreateCustomer < CustomerBaseFunction
       def initialize(attrs = {})
-        super "create_customer_#{attrs[:id]}", attrs
+        super "create_customer_#{attrs[:customerid]}", attrs
       end
 
       def to_xml

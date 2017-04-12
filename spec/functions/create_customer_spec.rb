@@ -25,6 +25,14 @@ describe IntacctRuby::Functions::CreateCustomer do
 
     let(:xml_base) { '/function/create_customer' }
 
+    it 'should have a controlid that describes the action' do
+      parameter = output.xpath('/function')
+                        .first
+                        .attributes['controlid']
+
+      expect(parameter.value).to eq "create_customer_#{attrs[:customerid]}"
+    end
+
     it 'contains expected customer params' do
       {
         customerid: attrs[:customerid],

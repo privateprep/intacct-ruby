@@ -27,7 +27,7 @@ describe IntacctRuby::Functions::UpdateCustomer do
                         .first
                         .attributes['controlid']
 
-      expect(parameter.value).to include('update_customer')
+      expect(parameter.value).to include "update_customer_#{attrs[:customerid]}"
     end
 
     it 'should contain the ID of the client-to-update' do

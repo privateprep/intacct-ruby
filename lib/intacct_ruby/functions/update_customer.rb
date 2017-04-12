@@ -5,7 +5,7 @@ module IntacctRuby
       include ContactsHelper
 
       def initialize(attrs = {})
-        super "update_customer_#{attrs[:id]} (#{timestamp})", attrs
+        super "update_customer_#{attrs[:customerid]} (#{timestamp})", attrs
       end
 
       def to_xml
