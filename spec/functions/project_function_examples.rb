@@ -13,37 +13,31 @@ def project_attributes(overrides = {})
   }.merge(overrides)
 end
 
-def generate_function_xml(function_class, attributes)
-  Nokogiri::XML function_class.new(attributes).to_xml
-end
-
 # function_name refers to the name that identifies the function to intacct,
 # usually a snake-case variant of the class name.
-shared_examples 'a project function' do |function_name, attributes|
-  let(:base_path) { "/function/#{function_name}" }
-
-  let(:xml_output) { generate_function_xml(described_class, attributes) }
+shared_examples 'a project function' do |function_name, function_xml|
+  let(:base_path) { function_base_path(function_name) }
 
   it 'contains expected standard params' do
     [:projectid, :name, :projectcategory, :customerid].each do |param_key|
-      param = xml_output.xpath("#{base_path}/#{param_key}")
-      expected = attributes[param_key]
+      param = function_xml.xpath("#{base_path}/#{param_key}")
+      expected = project_attributes[param_key]
 
       expect(param.text)
         .to eq(expected),
             "Value mismatch on #{param_key}. Expected " \
-            "\"#{attributes[param_key]}\", got \"#{param.text}\""
+            "\"#{project_attributes[param_key]}\", got \"#{param.text}\""
     end
   end
 
   let(:custom_fields_path) { "#{base_path}/customfields/customfield" }
 
   it 'contains expected customfield params' do
-    xml_output.xpath(custom_fields_path).each do |field|
+    function_xml.xpath(custom_fields_path).each do |field|
       field_key = field.xpath('customfieldname').text
       field_value = field.xpath('customfieldvalue').text
 
-      expected_value = attributes[:customfields][field_key.to_sym]
+      expected_value = project_attributes[:customfields][field_key.to_sym]
 
       expect(field_value)
         .to eq(expected_value),
