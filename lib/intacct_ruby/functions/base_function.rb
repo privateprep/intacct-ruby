@@ -5,9 +5,11 @@ module IntacctRuby
     # Creates the basic structure for all functions.
     # Meant to be an interface: this should not be implemented on its own.
     class BaseFunction
-      def initialize(controlid)
-        @xml = Builder::XmlMarkup.new
+      def initialize(controlid, attrs = {})
         @controlid = controlid
+        @attrs = attrs
+
+        @xml = Builder::XmlMarkup.new
       end
 
       def to_xml

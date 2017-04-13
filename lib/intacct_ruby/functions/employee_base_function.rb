@@ -11,12 +11,6 @@ module IntacctRuby
       include IntacctRuby::ContactsHelper
       include IntacctRuby::DateHelper
 
-      def initialize(controlid, attrs = {})
-        @attrs = attrs
-
-        super controlid
-      end
-
       private
 
       def employee_params

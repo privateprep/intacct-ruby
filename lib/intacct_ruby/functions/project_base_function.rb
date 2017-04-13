@@ -4,12 +4,6 @@ module IntacctRuby
   module Functions
     # contains shared code for creating and updating projects
     class ProjectBaseFunction < BaseFunction
-      def initialize(controlid, attrs = {})
-        @attrs = attrs
-
-        super(controlid)
-      end
-
       private
 
       def project_params

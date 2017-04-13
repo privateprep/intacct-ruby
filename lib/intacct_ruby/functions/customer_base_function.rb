@@ -10,12 +10,6 @@ module IntacctRuby
     class CustomerBaseFunction < BaseFunction
       include ContactsHelper
 
-      def initialize(controlid, attrs = {})
-        @attrs = attrs
-
-        super(controlid)
-      end
-
       private
 
       def customer_params
