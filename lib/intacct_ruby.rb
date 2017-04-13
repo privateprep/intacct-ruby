@@ -12,3 +12,5 @@ require 'intacct_ruby/functions/update_customer'
 
 require 'intacct_ruby/functions/create_project'
 require 'intacct_ruby/functions/update_project'
+
+require 'intacct_ruby/functions/create_employee'
