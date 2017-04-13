@@ -1,43 +1,21 @@
-require 'nokogiri'
-
 require 'intacct_ruby/functions/update_customer'
 
+require 'functions/customer_function_examples'
+require 'functions/function_spec_helper'
+require 'functions/function_examples'
+require 'functions/update_function_examples'
+
 describe IntacctRuby::Functions::UpdateCustomer do
-  include IntacctRuby::Functions
+  function_xml = generate_function_xml(described_class, customer_attributes)
 
-  let(:output) do
-    generate_function_xml(
-      IntacctRuby::Functions::UpdateCustomer,
-      customer_attributes
-    )
-  end
+  it_behaves_like 'a function',
+                  function_xml,
+                  "update_customer_#{customer_attributes[:customerid]}"
 
-  describe :to_xml do
-    let(:attrs) do
-      {
-        first_name: 'Han',
-        last_name: 'Solo',
-        type: 'Person',
-        customerid: '1',
-        email1: 'han@solo.com',
-        status: 'active'
-      }
-    end
+  it_behaves_like 'an update function',
+                  function_xml,
+                  :customerid,
+                  customer_attributes[:customerid]
 
-    it 'should have a controlid that describes the action' do
-      parameter = output.xpath('/function')
-                        .first
-                        .attributes['controlid']
-
-      expect(parameter.value).to include "update_customer_#{attrs[:customerid]}"
-    end
-
-    it 'should contain the ID of the client-to-update' do
-      parameter = output.xpath('/function/update_customer')
-                        .first
-                        .attributes['customerid']
-
-      expect(parameter.value).to eq attrs[:customerid]
-    end
-  end
+  it_behaves_like 'a customer function', 'update_customer', function_xml
 end

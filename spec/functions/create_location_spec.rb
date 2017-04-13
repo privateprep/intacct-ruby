@@ -1,8 +1,8 @@
 require 'intacct_ruby/functions/create_location'
 
+require 'functions/location_function_examples'
 require 'functions/function_spec_helper'
 require 'functions/function_examples'
-require 'functions/location_function_examples'
 require 'functions/creation_function_examples'
 
 describe IntacctRuby::Functions::CreateLocation do
