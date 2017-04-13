@@ -14,3 +14,4 @@ require 'intacct_ruby/functions/create_project'
 require 'intacct_ruby/functions/update_project'
 
 require 'intacct_ruby/functions/create_employee'
+require 'intacct_ruby/functions/update_employee'
