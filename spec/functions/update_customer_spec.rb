@@ -5,6 +5,13 @@ require 'intacct_ruby/functions/update_customer'
 describe IntacctRuby::Functions::UpdateCustomer do
   include IntacctRuby::Functions
 
+  let(:output) do
+    generate_function_xml(
+      IntacctRuby::Functions::UpdateCustomer,
+      customer_attributes
+    )
+  end
+
   describe :to_xml do
     let(:attrs) do
       {
@@ -15,11 +22,6 @@ describe IntacctRuby::Functions::UpdateCustomer do
         email1: 'han@solo.com',
         status: 'active'
       }
-    end
-
-    let(:output) do
-      request = IntacctRuby::Functions::UpdateCustomer.new(attrs)
-      Nokogiri::XML(request.to_xml)
     end
 
     it 'should have a controlid that describes the action' do

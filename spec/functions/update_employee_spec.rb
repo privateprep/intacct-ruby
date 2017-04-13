@@ -5,7 +5,7 @@ require 'intacct_ruby/functions/update_employee'
 require 'functions/employee_function_examples'
 
 describe IntacctRuby::Functions::UpdateEmployee do
-  function_xml = Nokogiri::XML described_class.new(employee_attributes).to_xml
+  function_xml = generate_function_xml(described_class, employee_attributes)
 
   it_behaves_like 'an employee function', 'update_employee', function_xml
 
