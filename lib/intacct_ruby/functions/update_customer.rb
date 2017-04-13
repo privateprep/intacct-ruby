@@ -1,3 +1,5 @@
+require 'intacct_ruby/functions/customer_base_function'
+
 module IntacctRuby
   module Functions
     # update customer instance

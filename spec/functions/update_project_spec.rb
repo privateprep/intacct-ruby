@@ -1,5 +1,6 @@
 require 'nokogiri'
 
+require 'functions/function_spec_helper'
 require 'functions/project_function_examples'
 
 require 'intacct_ruby/functions/update_project'

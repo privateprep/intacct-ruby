@@ -1,3 +1,5 @@
+require 'intacct_ruby/functions/employee_base_function'
+
 module IntacctRuby
   module Functions
     # function used to update employee instances

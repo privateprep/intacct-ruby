@@ -1,7 +1,5 @@
-require 'builder'
-
-require 'intacct_ruby/helpers/contacts_helper'
 require 'intacct_ruby/functions/base_function'
+require 'intacct_ruby/helpers/contacts_helper'
 
 module IntacctRuby
   module Functions

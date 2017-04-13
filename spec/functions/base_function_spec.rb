@@ -1,5 +1,4 @@
 require 'intacct_ruby/functions/base_function'
-require 'spec_helper'
 require 'nokogiri'
 
 include IntacctRuby::Functions
