@@ -17,11 +17,13 @@ def employee_attributes(overrides = {})
   }.merge(overrides)
 end
 
-shared_examples 'an employee function' do |function_name, function_xml|
+shared_examples 'an employee function' do |function_xml|
   include IntacctRuby::ContactsHelper
   include IntacctRuby::DateHelper
 
   let(:xml_base) { function_base_path(function_name) }
+
+  let(:function_name) { function_name_from(function_xml) }
 
   it 'contains expected employee params' do
     [:locationid, :supervisorid, :status].each do |parameter_key|

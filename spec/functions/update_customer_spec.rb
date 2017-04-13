@@ -17,5 +17,5 @@ describe IntacctRuby::Functions::UpdateCustomer do
                   :customerid,
                   customer_attributes[:customerid]
 
-  it_behaves_like 'a customer function', 'update_customer', function_xml
+  it_behaves_like 'a customer function', function_xml
 end

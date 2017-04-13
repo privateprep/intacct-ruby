@@ -17,5 +17,5 @@ describe IntacctRuby::Functions::CreateProject do
                   :projectid,
                   project_attributes[:projectid]
 
-  it_behaves_like 'a project function', 'create_project', function_xml
+  it_behaves_like 'a project function', function_xml
 end

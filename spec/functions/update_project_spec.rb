@@ -24,5 +24,5 @@ describe IntacctRuby::Functions::UpdateProject do
                   :projectid,
                   project_attributes[:projectid]
 
-  it_behaves_like 'a project function', 'update_project', function_xml
+  it_behaves_like 'a project function', function_xml
 end

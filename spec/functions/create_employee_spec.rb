@@ -17,5 +17,5 @@ describe IntacctRuby::Functions::CreateEmployee do
                   :employeeid,
                   employee_attributes[:employeeid]
 
-  it_behaves_like 'an employee function', 'create_employee', function_xml
+  it_behaves_like 'an employee function', function_xml
 end

@@ -12,10 +12,12 @@ def customer_attributes(overrides = {})
   }.merge(overrides)
 end
 
-shared_examples 'a customer function' do |function_name, function_xml|
+shared_examples 'a customer function' do |function_xml|
   include IntacctRuby::ContactsHelper
 
   let(:xml_base) { function_base_path(function_name) }
+
+  let(:function_name) { function_name_from(function_xml) }
 
   it 'contains expected customer params' do
     {

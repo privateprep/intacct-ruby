@@ -17,5 +17,5 @@ describe IntacctRuby::Functions::CreateCustomer do
                   :customerid,
                   customer_attributes[:customerid]
 
-  it_behaves_like 'a customer function', 'create_customer', function_xml
+  it_behaves_like 'a customer function', function_xml
 end
