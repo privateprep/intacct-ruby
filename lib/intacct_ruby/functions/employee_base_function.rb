@@ -28,10 +28,6 @@ module IntacctRuby
         xml.target!
       end
 
-      def start_date_params
-        date_params(:startdate, @attrs[:startdate])
-      end
-
       def employee_contact_params
         contact_params(@attrs, @attrs[:employeeid], 'Employee')
       end

@@ -9,3 +9,7 @@ end
 def control_id_from(function_xml)
   function_xml.xpath('/function').first.attributes['controlid'].value
 end
+
+def function_name_from(function_xml)
+  function_xml.xpath('/function').children.first.name
+end
