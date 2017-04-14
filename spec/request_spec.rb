@@ -11,26 +11,26 @@ include IntacctRuby
 # For all ENVs in this format:
 # xml_key represents the key associated with each ENV in the request produced
 CONTROL_BLOCK_ENVS = {
-  INTACCT_SENDER_ID: {
+  intacct_senderid: {
     xml_key: 'senderid',
     value: 'senderid_value'
   },
-  INTACCT_SENDER_PW: {
+  intacct_sender_password: {
     xml_key: 'password',
     value: 'sender_password'
   }
 }.freeze
 
 AUTHENTICATION_BLOCK_ENVS = {
-  INTACCT_USER_ID: {
+  intacct_userid: {
     xml_key: 'userid',
     value: 'userid_value'
   },
-  INTACCT_COMPANY_ID: {
+  intacct_companyid: {
     xml_key: 'companyid',
     value: 'companyid_value'
   },
-  INTACCT_USER_PW: {
+  intacct_user_password: {
     xml_key: 'password',
     value: 'user_password'
   }

@@ -52,8 +52,8 @@ module IntacctRuby
 
     def control_block
       request.control do
-        request.senderid Figaro.env.INTACCT_SENDER_ID
-        request.password Figaro.env.INTACCT_SENDER_PW
+        request.senderid Figaro.env.intacct_senderid
+        request.password Figaro.env.intacct_sender_password
 
         # As recommended by Intacct API reference. This ID should be unique
         # to the call: it's used to associate a response with a request.
@@ -67,9 +67,9 @@ module IntacctRuby
     def authentication_block
       request.authentication do
         request.login do
-          request.userid    Figaro.env.INTACCT_USER_ID
-          request.companyid Figaro.env.INTACCT_COMPANY_ID
-          request.password  Figaro.env.INTACCT_USER_PW
+          request.userid    Figaro.env.intacct_userid
+          request.companyid Figaro.env.intacct_companyid
+          request.password  Figaro.env.intacct_user_password
         end
       end
     end
