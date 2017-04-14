@@ -1,3 +1,5 @@
+[ ![Codeship Status for jzornow/intacct-ruby](https://app.codeship.com/projects/161bbcb0-037f-0135-febb-660dbc75d940/status?branch=master)](https://app.codeship.com/projects/213338)
+
 # IntacctRuby
 
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/intacct_ruby`. To experiment with that code, run `bin/console` for an interactive prompt.
