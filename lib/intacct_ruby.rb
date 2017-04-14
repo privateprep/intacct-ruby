@@ -17,3 +17,5 @@ require 'intacct_ruby/functions/update_employee'
 
 require 'intacct_ruby/functions/create_location'
 require 'intacct_ruby/functions/update_location'
+
+require 'intacct_ruby/functions/create_item'
