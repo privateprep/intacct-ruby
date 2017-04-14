@@ -1,4 +1,6 @@
 require 'builder'
+require 'figaro'
+
 require 'intacct_ruby/api'
 require 'intacct_ruby/response'
 
