@@ -2,6 +2,7 @@ require 'builder'
 
 require 'intacct_ruby/api'
 require 'intacct_ruby/response'
+require 'intacct_ruby/exceptions/insufficient_credentials_exception'
 
 module IntacctRuby
   # An outgoing request to the Intacct API. Can have multiple functions.
@@ -14,8 +15,17 @@ module IntacctRuby
       transaction: true
     }.freeze
 
+    REQUIRED_AUTHENTICATION_KEYS = [
+      :senderid,
+      :sender_password,
+      :userid,
+      :companyid,
+      :user_password
+    ].freeze
+
     def initialize(*functions, request_params)
-      # request_params should contain all req'd authentication information
+      # request_params should contain all req'd authentication information. If
+      # not, an error will be thrown on #send
       @opts = DEFAULTS.dup.merge request_params
 
       # If a hash is provided + popped, the remaining attrs are functions
@@ -35,12 +45,27 @@ module IntacctRuby
     def send(api = nil)
       api ||= Api.new
 
+      validate_keys!
+
       Response.new api.send(self)
     end
 
     private
 
     attr_reader :request, :functions
+
+    def validate_keys!
+      missing_keys = REQUIRED_AUTHENTICATION_KEYS - @opts.keys
+
+      unless missing_keys.empty?
+        missing_keys.map! { |s| ":#{s}" } # so they appear as symbols in output
+
+        raise Exceptions::InsufficientCredentialsException,
+              "[#{missing_keys.join(', ')}] required for a valid request. "
+              'All authentication-related keys should be provided on ' \
+              'instantiation in IntacctRuby::Request#new'
+      end
+    end
 
     def timestamp
       @timestamp ||= Time.now.utc.to_s

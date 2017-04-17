@@ -4,6 +4,7 @@ require 'nokogiri'
 
 require 'intacct_ruby/request'
 require 'intacct_ruby/response'
+require 'intacct_ruby/exceptions/insufficient_credentials_exception'
 
 include IntacctRuby
 
@@ -48,11 +49,9 @@ end
 
 describe Request do
   context 'with no overrides' do
-    before(:all) { generate_request_xml }
-
     describe :send do
       it 'sends request through the API' do
-        request = Request.new(AUTHENTICATION_PARAMS)
+        request = Request.new(*function_stubs, AUTHENTICATION_PARAMS)
         response = mock('IntacctRuby::Response')
 
         api_spy = mock('IntacctRuby::Api')
@@ -62,7 +61,26 @@ describe Request do
 
         request.send(api_spy)
       end
+
+      it 'raises error unless all authentication keys are provided' do
+        AUTHENTICATION_PARAMS.keys.each do |omitted_key|
+          incomplete_params = AUTHENTICATION_PARAMS.dup
+          incomplete_params.delete(omitted_key)
+
+          request = Request.new(*function_stubs, incomplete_params)
+
+          expected_error = Exceptions::InsufficientCredentialsException
+          expected_message = Regexp.new(
+            "\\[:#{omitted_key}\\] required for a valid request."
+          )
+
+          expect { request.send }
+            .to raise_error(expected_error, expected_message)
+        end
+      end
     end
+
+    before(:all) { generate_request_xml }
 
     describe 'control block' do
       it 'contains expected authentication parameters' do
