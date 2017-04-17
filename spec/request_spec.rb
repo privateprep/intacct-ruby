@@ -1,7 +1,6 @@
 require 'spec_helper'
 require 'mocha/api'
 require 'nokogiri'
-require 'figaro'
 
 require 'intacct_ruby/request'
 require 'intacct_ruby/response'
@@ -10,42 +9,20 @@ include IntacctRuby
 
 # For all ENVs in this format:
 # xml_key represents the key associated with each ENV in the request produced
-CONTROL_BLOCK_ENVS = {
-  intacct_senderid: {
-    xml_key: 'senderid',
-    value: 'senderid_value'
-  },
-  intacct_sender_password: {
-    xml_key: 'password',
-    value: 'sender_password'
-  }
+AUTHENTICATION_PARAMS = {
+  senderid: 'senderid_value',
+  sender_password: 'sender_password_value',
+  userid: 'userid_value',
+  companyid: 'companyid_value',
+  user_password: 'user_password_value'
 }.freeze
 
-AUTHENTICATION_BLOCK_ENVS = {
-  intacct_userid: {
-    xml_key: 'userid',
-    value: 'userid_value'
-  },
-  intacct_companyid: {
-    xml_key: 'companyid',
-    value: 'companyid_value'
-  },
-  intacct_user_password: {
-    xml_key: 'password',
-    value: 'user_password'
-  }
-}.freeze
-
-def stub_envs
-  CONTROL_BLOCK_ENVS.merge(AUTHENTICATION_BLOCK_ENVS).each do |name, attrs|
-    Figaro.env.stubs(name).returns attrs[:value]
-  end
-end
-
-def generate_request_xml(*args)
+def generate_request_xml(request_param_overrides = {})
   @request_xml ||= begin
-    args = function_stubs if args.empty?
-    Nokogiri::XML Request.new(*args).to_xml
+    Nokogiri::XML Request.new(
+      *function_stubs,
+      AUTHENTICATION_PARAMS.merge(request_param_overrides)
+    ).to_xml
   end
 end
 
@@ -70,14 +47,12 @@ def function_stubs
 end
 
 describe Request do
-  before(:all) { stub_envs }
-
   context 'with no overrides' do
     before(:all) { generate_request_xml }
 
     describe :send do
       it 'sends request through the API' do
-        request = Request.new(*function_stubs)
+        request = Request.new(AUTHENTICATION_PARAMS)
         response = mock('IntacctRuby::Response')
 
         api_spy = mock('IntacctRuby::Api')
@@ -90,10 +65,13 @@ describe Request do
     end
 
     describe 'control block' do
-      it 'contains values from environmental variables' do
-        CONTROL_BLOCK_ENVS.each do |_, attrs|
-          expected = attrs[:value]
-          actual = get_value_from control_block_xml, attrs[:xml_key]
+      it 'contains expected authentication parameters' do
+        {
+          senderid: 'senderid',
+          sender_password: 'password'
+        }.each do |parameter_name, xml_label|
+          expected = AUTHENTICATION_PARAMS[parameter_name]
+          actual = get_value_from control_block_xml, xml_label
 
           expect(actual).to eq expected
         end
@@ -117,15 +95,20 @@ describe Request do
     end
 
     describe 'authentication block' do
-      it 'contains values from environmental variables' do
+      it 'contains expected authentication parameters' do
         authentication_block_xml = @request_xml.xpath(
           '/request/operation/authentication/login'
         )
 
-        AUTHENTICATION_BLOCK_ENVS.each do |_, attrs|
-          actual = get_value_from authentication_block_xml, attrs[:xml_key]
+        {
+          userid: 'userid',
+          user_password: 'password',
+          companyid: 'companyid'
+        }.each do |parameter_name, xml_label|
+          expected = AUTHENTICATION_PARAMS[parameter_name]
+          actual = get_value_from authentication_block_xml, xml_label
 
-          expect(actual).to eq attrs[:value]
+          expect(actual).to eq expected
         end
       end
     end
@@ -156,7 +139,7 @@ describe Request do
           includewhitespace: 'includewhitespace override'
         }
 
-        generate_request_xml(*function_stubs, overrides)
+        generate_request_xml(overrides)
 
         overrides.each do |field_name, field_value|
           request_value = get_value_from control_block_xml, field_name.to_s
@@ -170,10 +153,7 @@ describe Request do
       it 'shows overrides instead of defaults' do
         transaction_override_value = 'Transaction Override'
 
-        generate_request_xml(
-          *function_stubs,
-          transaction: transaction_override_value
-        )
+        generate_request_xml(transaction: transaction_override_value)
 
         request_attribute = operation_block_xml.first.attributes['transaction']
 

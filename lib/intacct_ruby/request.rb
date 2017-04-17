@@ -1,5 +1,4 @@
 require 'builder'
-require 'figaro'
 
 require 'intacct_ruby/api'
 require 'intacct_ruby/response'
@@ -15,15 +14,12 @@ module IntacctRuby
       transaction: true
     }.freeze
 
-    def initialize(*args)
-      @opts = DEFAULTS.dup
-
-      # `args` should be a list of Intacct::Function objects, with the last
-      # argument optionally providing overrides to request defaults
-      @opts.merge!(args.pop) if args.last.is_a? Hash
+    def initialize(*functions, request_params)
+      # request_params should contain all req'd authentication information
+      @opts = DEFAULTS.dup.merge request_params
 
       # If a hash is provided + popped, the remaining attrs are functions
-      @functions = args
+      @functions = functions
     end
 
     def to_xml
@@ -52,8 +48,8 @@ module IntacctRuby
 
     def control_block
       request.control do
-        request.senderid Figaro.env.intacct_senderid
-        request.password Figaro.env.intacct_sender_password
+        request.senderid @opts[:senderid]
+        request.password @opts[:sender_password]
 
         # As recommended by Intacct API reference. This ID should be unique
         # to the call: it's used to associate a response with a request.
@@ -67,9 +63,9 @@ module IntacctRuby
     def authentication_block
       request.authentication do
         request.login do
-          request.userid    Figaro.env.intacct_userid
-          request.companyid Figaro.env.intacct_companyid
-          request.password  Figaro.env.intacct_user_password
+          request.userid    @opts[:userid]
+          request.companyid @opts[:companyid]
+          request.password  @opts[:user_password]
         end
       end
     end
