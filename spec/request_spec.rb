@@ -79,6 +79,13 @@ describe Request do
       end
     end
 
+    it 'raises an error if no functions are provided' do
+      request = Request.new(*[], AUTHENTICATION_PARAMS)
+
+      expect { request.send }
+        .to raise_error(Exceptions::EmptyRequestException)
+    end
+
     describe 'control block' do
       it 'contains expected authentication parameters' do
         generate_request_xml

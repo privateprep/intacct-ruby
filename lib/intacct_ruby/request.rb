@@ -3,6 +3,7 @@ require 'builder'
 require 'intacct_ruby/api'
 require 'intacct_ruby/response'
 require 'intacct_ruby/exceptions/insufficient_credentials_exception'
+require 'intacct_ruby/exceptions/empty_request_exception'
 
 module IntacctRuby
   # An outgoing request to the Intacct API. Can have multiple functions.
@@ -46,6 +47,7 @@ module IntacctRuby
       api ||= Api.new
 
       validate_keys!
+      validate_functions!
 
       Response.new api.send(self)
     end
@@ -53,6 +55,13 @@ module IntacctRuby
     private
 
     attr_reader :request, :functions
+
+    def validate_functions!
+      unless functions.any?
+        raise Exceptions::EmptyRequestException,
+              'a successful request must contain at least one function'
+      end
+    end
 
     def validate_keys!
       missing_keys = REQUIRED_AUTHENTICATION_KEYS - @opts.keys
