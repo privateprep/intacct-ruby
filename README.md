@@ -34,7 +34,7 @@ create_project = IntacctRuby::Functions::CreateProject.new(
   }
 )
 
-request = IntacctRuby::Request.new(create_customer, create_project)
+request = IntacctRuby::Request.new(create_customer, create_project, authentication_params)
 request.send
 ```
 
@@ -91,9 +91,54 @@ This will fire off a request that looks something like this:
 ```
 If there are function errors (e.g. you omitted a required field) you'll see an error on response. Same if you see an internal server error, or any error outside of the 2xx range.
 
-## Customizing Calls
-
+## Authentication
 Before we go any further, make sure you've read the [Intacct API Quickstart Guide](https://developer.intacct.com/wiki/constructing-web-services-request#The%20Intacct%20DTDs).
+
+In IntacctRuby - as with the Intacct API that the gem wraps - your system credentials are pass along with each separate `Request` instance. The functions that define a request are followed by a hash that spells out each piece of information required by Intacct for authentication. These fields are:
+
+- `senderid`
+- `sender_password`\*
+- `userid`
+- `companyid`
+- `user_password`\*
+
+\* _In [Intacct's documentation](https://developer.intacct.com/wiki/constructing-web-services-request), these are referred to only as `password`. This won't work in Rubyland, though, because we're unable to have multiple hash entries with the same key._
+
+### Authentication Example:
+
+```ruby
+IntacctRuby::Request.new(
+  some_function,
+  another_function,
+  senderid: 'some_senderid_value',
+  sender_password: 'some_sender_password_value',
+  userid: 'some_userid_value',
+  companyid: 'some_companyid_value',
+  user_password: 'some_user_password_value'
+)
+```
+
+Though, it probably makes more sense to keep all of these in some handy constant for easy reuse:
+```ruby
+REQUEST_OPTS = {
+  senderid: 'some_senderid_value',
+  sender_password: 'some_sender_password_value',
+  userid: 'some_userid_value',
+  companyid: 'some_companyid_value',
+  user_password: 'some_user_password_value'
+}
+
+IntacctRuby::Request.new(some_function, another_function, REQUEST_OPTS)
+```
+
+### Important Notes on Authentication
+#### These Are Required!
+Obviously, Intacct won't do anything if you don't tell it who you are. To save you the bandwidth, this gem will throw errors if any of these auth params are not provided.
+
+#### BE SAFE!
+Though the examples above show hard-coded username/password pairs, this is a really bad idea to do in production code. Instead, we recommend storing these variables in ENVs, using a tool like [Figaro](https://github.com/laserlemon/figaro) to bring it all together.
+
+## Customizing Calls
 
 This gem creates calls using the following defaults:
 - **uniqueid:** false,
@@ -101,15 +146,23 @@ This gem creates calls using the following defaults:
 - **includewhitespace:** false,
 - **transaction:** true
 
-If you'd like to override any of these, you can do so when you create a new request:
+If you'd like to override any of these, you can do so when you create a new request by adding additional fields to the options hash passed into `Request#new`:
 
 ```ruby
-IntacctRuby::Request.new(
-  function_1,
-  function_2,
+REQUEST_OPTS = {
+  senderid: 'some_senderid_value',
+  sender_password: 'some_sender_password_value',
+  userid: 'some_userid_value',
+  companyid: 'some_companyid_value',
+  user_password: 'some_user_password_value'
+}
+
+REQUEST_OPTS.merge!(
   uniqueid: 'some_uniqueid_override',
   dtdversion: 'some_dtd_override'
 )
+
+IntacctRuby::Request.new(some_function, another_function, REQUEST_OPTS)
 ```
 ## Installation
 
@@ -127,28 +180,6 @@ And then execute:
 Or install it yourself as:
 
     $ gem install intacct_ruby
-
-### The Configuration (Don't Skip This Part!)
-Once the gem's in place, you'll have it teach it your company secrets.
-
-Intacct requires that the following credentials be passed along in the `<control>` block of each request:
-- `senderid`
-- (sender) `password`
-
-and that the following be sent in the `<authentication>` block, too:
-- `userid`
-- `companyid`
-- `password`
-
-IntacctRuby handles all this for you, but you'll need to tell it which is which. The gem pulls these values from Environmental variables, and it uses [Figaro](https://github.com/laserlemon/figaro) to manage the whole process. In order to get this to work, you'll need to have an `application.yml` file in your project directory with the following definitions:
-```yaml
-intacct_senderid:         'some senderid'
-intacct_sender_password:  'some password'
-intacct_userid:           'some userid'
-intacct_user_password:    'some password'
-intacct_companyid:        'some companyid'
-```
-Once those are in place, IntacctRuby will suck 'em up and deposit them in the requests that you generate. Eeeasy squeezey.
 
 ## Adding New Functions
 This gem was designed, as so many are, for a specific use case. The Intacct API has hundreds of API calls, though I only built out a dozen or so. Within that dozen, I only built out the fields that I needed in each call.
