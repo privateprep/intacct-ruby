@@ -34,12 +34,14 @@ module IntacctRuby
     end
 
     def to_xml
-      @request = Builder::XmlMarkup.new
+      @to_xml ||= begin
+        @request = Builder::XmlMarkup.new
 
-      request.instruct!
-      request.request do
-        control_block
-        operation_block
+        request.instruct!
+        request.request do
+          control_block
+          operation_block
+        end
       end
     end
 

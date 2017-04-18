@@ -13,12 +13,14 @@ module IntacctRuby
       end
 
       def to_xml
-        @xml.function controlid: @controlid do
-          yield(@xml)
-        end
+        @to_xml ||= begin
+          @xml.function controlid: @controlid do
+            yield(@xml)
+          end
 
-        # converts xml to string
-        @xml.target!
+          # converts xml to string
+          @xml.target!
+        end
       end
 
       private
