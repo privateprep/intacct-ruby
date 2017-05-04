@@ -22,3 +22,5 @@ require 'intacct_ruby/functions/create_item'
 require 'intacct_ruby/functions/update_item'
 
 require 'intacct_ruby/functions/create_aradjustment'
+
+require 'intacct_ruby/functions/create_gltransaction'
