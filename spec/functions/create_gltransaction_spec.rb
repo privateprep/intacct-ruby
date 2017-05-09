@@ -23,7 +23,8 @@ GLTRANSACTION_ATTRIBUTES = {
       },
       memo:       'glentry1 memo',
       locationid: 'glentry1 locationid',
-      customerid: 'glentry1 customerid'
+      customerid: 'glentry1 customerid',
+      employeeid: 'glentry1 employeeid'
     },
     {
       trtype:      'glentry2 trtype',
@@ -36,7 +37,8 @@ GLTRANSACTION_ATTRIBUTES = {
       },
       memo:       'glentry2 memo',
       locationid: 'glentry2 locationid',
-      customerid: 'glentry2 customerid'
+      customerid: 'glentry2 customerid',
+      employeeid: 'glentry2 employeeid'
     }
   ]
 }.freeze
@@ -83,7 +85,8 @@ describe IntacctRuby::Functions::CreateGLTransaction do
         :glaccountno,
         :memo,
         :locationid,
-        :customerid
+        :customerid,
+        :employeeid
       ].each do |key|
         xml_value = function_xml.xpath("#{entries_root}[#{index + 1}]/#{key}")
 
