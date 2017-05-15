@@ -4,21 +4,21 @@ require 'intacct_ruby/helpers/date_helper'
 module IntacctRuby
   module Functions
     # creates gltransaction instance in Intacct
-    class CreateGLTransaction < GLTransactionBaseFunction
+    class CreateStatGLTransaction < GLTransactionBaseFunction
       include DateHelper
 
       def initialize(attrs = {})
-        super "create_gltransaction (#{attrs[:description]} #{timestamp})",
+        super "create_statgltransaction (#{attrs[:description]} #{timestamp})",
               attrs
       end
 
       def to_xml
         super do |xml|
-          xml.create_gltransaction do
+          xml.create_statgltransaction do
             xml << gltransaction_header_params(@attrs)
 
-            xml.gltransactionentries do
-              xml << gltransactionentry_params(@attrs[:gltransactionentries])
+            xml.statgltransactionentries do
+              xml << gltransactionentry_params(@attrs[:statgltransactionentries])
             end
           end
         end
