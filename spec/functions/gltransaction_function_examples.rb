@@ -14,7 +14,9 @@ def transaction_entry_params
       memo:       "glentry#{i} memo",
       locationid: "glentry#{i} locationid",
       customerid: "glentry#{i} customerid",
-      employeeid: "glentry#{i} employeeid"
+      employeeid: "glentry#{i} employeeid",
+      projectid:  "glentry#{i} projectid",
+      itemid:     "glentry#{i} itemid"
     }
   end
 end
@@ -72,7 +74,9 @@ shared_examples 'a gltransaction function' do |fn_name, type, attrs, fn_xml|
         :memo,
         :locationid,
         :customerid,
-        :employeeid
+        :employeeid,
+        :projectid,
+        :itemid
       ].each do |key|
         xml_value = entries_root.xpath("glentry[#{index + 1}]/#{key}")
 

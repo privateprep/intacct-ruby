@@ -35,7 +35,15 @@ module IntacctRuby
         xml.glentry do
           xml << extract_from_attrs(attrs, :trtype, :amount, :glaccountno)
           xml << date_params(:datecreated, attrs[:datecreated])
-          xml << extract_from_attrs(attrs, :memo, :locationid, :customerid, :employeeid)
+          xml << extract_from_attrs(
+            attrs,
+            :memo,
+            :locationid,
+            :customerid,
+            :employeeid,
+            :projectid,
+            :itemid
+          )
         end
 
         xml.target!
