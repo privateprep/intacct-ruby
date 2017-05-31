@@ -14,6 +14,7 @@ module IntacctRuby
         xml = Builder::XmlMarkup.new
 
         xml.name full_name(@attrs)
+        xml.custrepid @attrs[:custrepid]
         xml.status @attrs[:status]
         xml.contactinfo do
           xml << contact_params(@attrs, @attrs[:customerid], 'Customer')

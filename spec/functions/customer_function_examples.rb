@@ -8,6 +8,7 @@ def customer_attributes(overrides = {})
     last_name: 'Solo',
     type: 'Person',
     email1: 'han@solo.com',
+    custrepid: '1234',
     status: 'active'
   }.merge(overrides)
 end
@@ -22,6 +23,7 @@ shared_examples 'a customer function' do |function_xml|
   it 'contains expected customer params' do
     {
       name: full_name(customer_attributes),
+      custrepid: customer_attributes[:custrepid],
       status: customer_attributes[:status]
     }.each do |parameter_key, expected_value|
       parameter = function_xml.xpath("#{xml_base}/#{parameter_key}")
