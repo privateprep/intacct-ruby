@@ -2,6 +2,8 @@ require 'builder'
 
 require 'intacct_ruby/api'
 require 'intacct_ruby/response'
+require 'intacct_ruby/function'
+
 require 'intacct_ruby/exceptions/insufficient_credentials_exception'
 require 'intacct_ruby/exceptions/empty_request_exception'
 
@@ -57,6 +59,17 @@ module IntacctRuby
     private
 
     attr_reader :request, :functions
+
+    def method_missing(method_name, *arguments, &block)
+      super unless Function::ALLOWED_TYPES.include? method_name.to_s
+
+      # object_type must be the first argument in arguments
+      @functions << Function.new(method_name, arguments.shift, *arguments)
+    end
+
+    def respond_to_missing?(method_name, include_private = false)
+      Functions::ALLOWED_TYPES.includes?(method_name) || super
+    end
 
     def validate_functions!
       unless functions.any?

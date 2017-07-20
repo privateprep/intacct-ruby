@@ -3,6 +3,7 @@ require 'mocha/api'
 require 'nokogiri'
 
 require 'intacct_ruby/request'
+require 'intacct_ruby/function'
 require 'intacct_ruby/response'
 require 'intacct_ruby/exceptions/insufficient_credentials_exception'
 require 'intacct_ruby/exceptions/empty_request_exception'
@@ -133,12 +134,35 @@ describe Request do
     end
 
     describe 'content block' do
-      it 'contains function payloads' do
-        generate_request_xml
+      context 'using legacy function objects' do
+        it 'contains function payloads' do
+          generate_request_xml
 
-        content_block = operation_block_xml.xpath('content').text
-        function_stubs.each do |function|
-          expect(content_block).to include function.to_xml
+          content_block = operation_block_xml.xpath('content').text
+          function_stubs.each do |function|
+            expect(content_block).to include function.to_xml
+          end
+        end
+      end
+
+      context 'using dynamic function generation' do
+        let(:object_type) { :object_type }
+        let(:function_type) { :create }
+        let(:arguments) { { argument_1: 'value_1', argument_2: 'value_2' } }
+        let(:request_xml) do
+          request = Request.new(AUTHENTICATION_PARAMS)
+          request.public_send(function_type, object_type, arguments)
+
+          Nokogiri:: XML request.to_xml
+        end
+
+        it 'contains expected function xml' do
+          expected_function = Function.new function_type, object_type, arguments
+          expected_function_xml = Nokogiri::XML(expected_function.to_xml)
+                                          .xpath('function') # strips xml header
+
+          expect(request_xml.xpath('//content/function').to_s)
+            .to include expected_function_xml.to_s
         end
       end
     end
