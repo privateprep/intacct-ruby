@@ -11,6 +11,8 @@ module IntacctRuby
   # An outgoing request to the Intacct API. Can have multiple functions.
   # Complete with send method that gets (and wraps) response from Intacct.
   class Request
+    attr_reader :functions
+
     DEFAULTS = {
       uniqueid: false,
       dtdversion: 3.0,
@@ -39,8 +41,8 @@ module IntacctRuby
       @to_xml ||= begin
         @request = Builder::XmlMarkup.new
 
-        request.instruct!
-        request.request do
+        @request.instruct!
+        @request.request do
           control_block
           operation_block
         end
@@ -57,8 +59,6 @@ module IntacctRuby
     end
 
     private
-
-    attr_reader :request, :functions
 
     def method_missing(method_name, *arguments, &block)
       super unless Function::ALLOWED_TYPES.include? method_name.to_s
@@ -96,35 +96,35 @@ module IntacctRuby
     end
 
     def control_block
-      request.control do
-        request.senderid @opts[:senderid]
-        request.password @opts[:sender_password]
+      @request.control do
+        @request.senderid @opts[:senderid]
+        @request.password @opts[:sender_password]
 
         # As recommended by Intacct API reference. This ID should be unique
         # to the call: it's used to associate a response with a request.
-        request.controlid          timestamp
-        request.uniqueid           @opts[:uniqueid]
-        request.dtdversion         @opts[:dtdversion]
-        request.includewhitespace  @opts[:includewhitespace]
+        @request.controlid          timestamp
+        @request.uniqueid           @opts[:uniqueid]
+        @request.dtdversion         @opts[:dtdversion]
+        @request.includewhitespace  @opts[:includewhitespace]
       end
     end
 
     def authentication_block
-      request.authentication do
-        request.login do
-          request.userid    @opts[:userid]
-          request.companyid @opts[:companyid]
-          request.password  @opts[:user_password]
+      @request.authentication do
+        @request.login do
+          @request.userid    @opts[:userid]
+          @request.companyid @opts[:companyid]
+          @request.password  @opts[:user_password]
         end
       end
     end
 
     def operation_block
-      request.operation transaction: @opts[:transaction] do
+      @request.operation transaction: @opts[:transaction] do
         authentication_block
-        request.content do
+        @request.content do
           functions.each do |function|
-            request << function.to_xml
+            @request << function.to_xml
           end
         end
       end
