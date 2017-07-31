@@ -68,7 +68,7 @@ module IntacctRuby
     end
 
     def respond_to_missing?(method_name, include_private = false)
-      Functions::ALLOWED_TYPES.includes?(method_name) || super
+      Function::ALLOWED_TYPES.includes?(method_name) || super
     end
 
     def validate_functions!
