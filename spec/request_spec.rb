@@ -60,7 +60,7 @@ describe Request do
 
       Response.expects(:new).with(response)
 
-      request.send(api_spy)
+      request.send(api: api_spy)
     end
 
     it 'raises error unless all authentication keys are provided' do
@@ -85,6 +85,13 @@ describe Request do
 
       expect { request.send }
         .to raise_error(Exceptions::EmptyRequestException)
+    end
+
+    it 'behaves like Object#send if a symbol is provided' do
+      request = Request.new(*function_stubs, AUTHENTICATION_PARAMS)
+
+      expect(request.send(:to_xml))
+        .to eq request.to_xml
     end
 
     describe 'control block' do
