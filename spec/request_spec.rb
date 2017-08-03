@@ -56,7 +56,7 @@ describe Request do
       response = mock('IntacctRuby::Response')
 
       api_spy = mock('IntacctRuby::Api')
-      api_spy.expects(:send).with(request).returns(response)
+      api_spy.expects(:send_request).with(request).returns(response)
 
       Response.expects(:new).with(response)
 

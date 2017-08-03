@@ -5,7 +5,7 @@ module IntacctRuby
       @http_gateway = http_gateway
     end
 
-    def send(request_object, post_request = nil)
+    def send_request(request_object, post_request = nil)
       post_request ||= Net::HTTP::Post.new(uri.request_uri)
 
       post_request['Content-Type'] = 'x-intacct-xml-request'

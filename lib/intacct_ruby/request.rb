@@ -55,7 +55,7 @@ module IntacctRuby
       validate_keys!
       validate_functions!
 
-      Response.new api.send(self)
+      Response.new api.send_request(self)
     end
 
     private
