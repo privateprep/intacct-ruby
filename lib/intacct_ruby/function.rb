@@ -52,10 +52,30 @@ module IntacctRuby
       arguments_to_convert.each do |key, value|
         argument_key = key.to_s.upcase
 
-        # Beware! Recursion below. Necessary for handling nested attrs.
-        argument_value = value.is_a?(Hash) ? argument_xml(value) : value.to_s
+        xml.tag!(argument_key) do
+          xml << argument_value_as_xml(value)
+        end
+      end
 
-        xml.tag!(argument_key) { xml << argument_value }
+      xml.target!
+    end
+
+    def argument_value_as_xml(value)
+      case value
+      when Hash
+        argument_xml(value) # recursive case
+      when Array
+        argument_value_list_xml(value) # recursive case
+      else
+        value.to_s # end case
+      end
+    end
+
+    def argument_value_list_xml(array_of_hashes)
+      xml = Builder::XmlMarkup.new
+
+      array_of_hashes.each do |argument_hash|
+        xml << argument_xml(argument_hash)
       end
 
       xml.target!

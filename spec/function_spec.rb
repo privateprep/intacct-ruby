@@ -37,8 +37,12 @@ describe Function do
       {
         some:           'argument',
         another:        'string',
-        nested:         { nested_key: 'nested value' },
-        another_nested: { another_key: 'another value' }
+        nested_as_hash:         { nested_key: 'nested value' },
+        another_nested_as_hash: { another_key: 'another value' },
+        nested_as_array: [
+          { first_key:  'first_value'  },
+          { second_key: 'second_value' }
+        ]
       }
     end
 
@@ -64,7 +68,7 @@ describe Function do
 
     context 'given non-nested arguments' do
       it 'has function arguments as key/value pairs' do
-        arguments.reject { |_, value| value.is_a? Hash }
+        arguments.select { |_, value| [String, Integer].include?(value.class) }
                  .each do |key, expected_value|
           xml_object_key = to_xml_key object_type
           xml_argument_key = to_xml_key key
@@ -80,21 +84,43 @@ describe Function do
     end
 
     context 'given nested arguments' do
-      it 'converts those arguments to nested XML' do
-        puts xml.to_s
-        arguments.select { |_, value| value.is_a? Hash }
-                 .each do |key, nested_value|
-          xml_object_key = to_xml_key object_type
-          xml_outer_key = to_xml_key key
+      context 'given that nested arguments are in hash' do
+        it 'converts those arguments to nested XML' do
+          arguments.select { |_, value| value.is_a? Hash }
+                   .each do |key, nested_value|
+            xml_object_key = to_xml_key object_type
+            xml_outer_key = to_xml_key key
 
-          nested_value.each do |inner_key, inner_value|
-            xml_inner_key = to_xml_key inner_key
-            xml_inner_value = xml.xpath(
-              "//#{xml_object_key}/#{xml_outer_key}/#{xml_inner_key}"
-            )
+            nested_value.each do |inner_key, inner_value|
+              xml_inner_key = to_xml_key inner_key
+              xml_inner_value = xml.xpath(
+                "//#{xml_object_key}/#{xml_outer_key}/#{xml_inner_key}"
+              )
 
-            expect(xml_inner_value.first.children.to_s)
-              .to eq inner_value
+              expect(xml_inner_value.first.children.to_s)
+                .to eq inner_value
+            end
+          end
+        end
+      end
+
+      context 'given that those arguments are in an array' do
+        it 'converts those arguments to an XML list' do
+          arguments.select { |_, value| value.is_a? Array }
+                   .each do |outer_key, array_body|
+            xml_object_key = to_xml_key object_type
+            xml_array_key = to_xml_key outer_key # key of XML Array
+            array_body.each do |hash_entry| # because array of hashes
+              hash_entry.each do |array_item_key, array_item_value|
+                xml_array_item_key = to_xml_key array_item_key
+                xml_array_item_value = xml.xpath(
+                  "//#{xml_object_key}/#{xml_array_key}/#{xml_array_item_key}"
+                )
+
+                expect(xml_array_item_value.first.children.to_s)
+                  .to eq array_item_value
+              end
+            end
           end
         end
       end
