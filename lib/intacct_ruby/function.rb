@@ -14,6 +14,8 @@ module IntacctRuby
       delete
     ).freeze
 
+    READ_TYPES = %w(read readByQuery readByName).freeze
+
     def initialize(function_type, object_type, arguments = {})
       @function_type = function_type.to_s
       @object_type = object_type.to_s
@@ -27,8 +29,12 @@ module IntacctRuby
 
       xml.function controlid: controlid do
         xml.tag!(@function_type) do
-          xml.tag!(@object_type.upcase) do
-            xml << argument_xml(@arguments)
+          if READ_TYPES.exclude?(@function_type)
+            xml.tag!(@object_type.upcase) do
+              xml << argument_xml(@arguments)
+            end
+          else
+            xml << argument_xml(@arguments, false)
           end
         end
       end
@@ -46,11 +52,11 @@ module IntacctRuby
       "#{@function_type}-#{@object_type}-#{timestamp}"
     end
 
-    def argument_xml(arguments_to_convert)
+    def argument_xml(arguments_to_convert, upcase = true)
       xml = Builder::XmlMarkup.new
 
       arguments_to_convert.each do |key, value|
-        argument_key = key.to_s.upcase
+        argument_key = upcase ? key.to_s.upcase : key.to_s
 
         xml.tag!(argument_key) do
           xml << argument_value_as_xml(value)
