@@ -14,7 +14,7 @@ module IntacctRuby
       delete
     ).freeze
 
-    READ_TYPES = %w(read readByQuery readByName).freeze
+    CRU_TYPES = %w(create update).freeze
 
     def initialize(function_type, object_type, arguments = {})
       @function_type = function_type.to_s
@@ -29,7 +29,7 @@ module IntacctRuby
 
       xml.function controlid: controlid do
         xml.tag!(@function_type) do
-          if READ_TYPES.exclude?(@function_type)
+          if CRU_TYPES.include?(@function_type)
             xml.tag!(@object_type.upcase) do
               xml << argument_xml(@arguments)
             end
