@@ -14,7 +14,9 @@ module IntacctRuby
       delete
     ).freeze
 
-    CRU_TYPES = %w(create update).freeze
+    CU_TYPES = %w(create update).freeze
+
+    LEGACY_API = %w(SODOCUMENT).freeze
 
     def initialize(function_type, object_type, arguments = {})
       @function_type = function_type.to_s
@@ -28,13 +30,13 @@ module IntacctRuby
       xml = Builder::XmlMarkup.new
 
       xml.function controlid: controlid do
-        xml.tag!(@function_type) do
-          if CRU_TYPES.include?(@function_type)
+        xml.tag!(functionid) do
+          if legacy_end_point? || CU_TYPES.exclude?(@function_type)
+            xml << argument_xml(@arguments, false)
+          else
             xml.tag!(@object_type.upcase) do
               xml << argument_xml(@arguments)
             end
-          else
-            xml << argument_xml(@arguments, false)
           end
         end
       end
@@ -50,6 +52,18 @@ module IntacctRuby
 
     def controlid
       "#{@function_type}-#{@object_type}-#{timestamp}"
+    end
+
+    def functionid
+      if legacy_end_point?
+        "#{@function_type}_#{@object_type}".downcase
+      else
+        @function_type
+      end
+    end
+
+    def legacy_end_point?
+      LEGACY_API.include?(@object_type) && CU_TYPES.include?(@function_type)
     end
 
     def argument_xml(arguments_to_convert, upcase = true)
