@@ -16,7 +16,7 @@ module IntacctRuby
 
     CU_TYPES = %w(create update).freeze
 
-    LEGACY_API = %w(SODOCUMENT).freeze
+    LEGACY_API = { 'sodocument' => 'sotransaction' }.freeze
 
     def initialize(function_type, object_type, arguments = {})
       @function_type = function_type.to_s
@@ -55,15 +55,12 @@ module IntacctRuby
     end
 
     def functionid
-      if legacy_end_point?
-        "#{@function_type}_#{@object_type}".downcase
-      else
-        @function_type
-      end
+      translation = LEGACY_API[@object_type.downcase] || @object_type.downcase
+      legacy_end_point? ? "#{@function_type}_#{translation}" : @function_type
     end
 
     def legacy_end_point?
-      LEGACY_API.include?(@object_type) && CU_TYPES.include?(@function_type)
+      LEGACY_API.keys.any? { |s| s.casecmp(@object_type).zero? } && CU_TYPES.include?(@function_type)
     end
 
     def argument_xml(arguments_to_convert, upcase = true)
