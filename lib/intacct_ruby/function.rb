@@ -32,7 +32,7 @@ module IntacctRuby
       xml.function controlid: controlid do
         xml.tag!(functionid) do
           if legacy_end_point? || CU_TYPES.exclude?(@function_type)
-            xml << argument_xml(@arguments, false)
+            xml << argument_xml(@arguments, to_case: :downcase)
           else
             xml.tag!(@object_type.upcase) do
               xml << argument_xml(@arguments)
@@ -63,36 +63,46 @@ module IntacctRuby
       LEGACY_API.keys.any? { |s| s.casecmp(@object_type).zero? } && CU_TYPES.include?(@function_type)
     end
 
-    def argument_xml(arguments_to_convert, upcase = true)
+    def argument_xml(arguments_to_convert, options = {})
+      default_options = { to_case: :upcase }
+      options = options.reverse_merge!(default_options)
+
       xml = Builder::XmlMarkup.new
 
       arguments_to_convert.each do |key, value|
-        argument_key = upcase ? key.to_s.upcase : key.to_s
+        argument_key = case options[:to_case]
+                       when :upcase
+                         key.to_s.upcase
+                       when :downcase
+                         key.to_s.downcase
+                       else
+                         key.to_s
+                       end
 
         xml.tag!(argument_key) do
-          xml << argument_value_as_xml(value)
+          xml << argument_value_as_xml(value, options)
         end
       end
 
       xml.target!
     end
 
-    def argument_value_as_xml(value)
+    def argument_value_as_xml(value, options = {})
       case value
       when Hash
-        argument_xml(value) # recursive case
+        argument_xml(value, options) # recursive case
       when Array
-        argument_value_list_xml(value) # recursive case
+        argument_value_list_xml(value, options) # recursive case
       else
         value.to_s # end case
       end
     end
 
-    def argument_value_list_xml(array_of_hashes)
+    def argument_value_list_xml(array_of_hashes, options = {})
       xml = Builder::XmlMarkup.new
 
       array_of_hashes.each do |argument_hash|
-        xml << argument_xml(argument_hash)
+        xml << argument_xml(argument_hash, options)
       end
 
       xml.target!
