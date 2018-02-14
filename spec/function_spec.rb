@@ -8,7 +8,7 @@ require 'intacct_ruby/exceptions/unknown_function_type'
 include IntacctRuby
 
 def to_xml_key(symbol)
-  symbol.to_s.upcase
+  symbol.to_s
 end
 
 describe Function do
@@ -32,7 +32,7 @@ describe Function do
 
   describe :to_xml do
     let(:function_type) { :create }
-    let(:object_type)   { :objecttype }
+    let(:object_type)   { :OBJECTTYPE }
     let(:arguments) do
       {
         some:           'argument',
