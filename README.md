@@ -10,7 +10,7 @@ Unlike the other Gems out in the Rubyverse, this library supports one of the Int
 ### Why Does This Matter?
 In an ERP system like Intacct, you'll probably want to perform multiple actions at once, like debiting one account and crediting another, or creating several associated records simulatenously. The more calls you make, the longer it will take to see a response. That's just a fact. But if you can bundle all of those actions together into a single call, you lower the load on both your system and Intacct's servers and guarantee yourself a quicker response. Intacct's entire API is built around this idea, and `IntacctRuby` translates that philosophy into Ruby.
 
-### How Do It Do?
+### How To Do It?
 Let's say you want to create a project and a customer associated with that project simultaneously. The Intacct API would tell you to create a call with a `<create><CUSTOMER>` function followed by a `<create><PROJECT>` function. So let's do it!
 
 ```ruby
@@ -18,26 +18,28 @@ Let's say you want to create a project and a customer associated with that proje
 # for more information.
 request = IntacctRuby::Request.new(REQUEST_OPTS)
 
-request.create :customer, {
-  customerid: '1',
-  first_name: 'Han',
-  last_name: 'Solo',
-  type: 'Person',
-  email1: 'han@solo.com',
-  status: 'active'
+request.create :CUSTOMER, {
+  CUSTOMERID: '1',
+  FIRST_NAME: 'Han',
+  LAST_NAME: 'Solo',
+  TYPE: 'Person',
+  EMAIL1: 'han@solo.com',
+  STATUS: 'active'
 }
 
-request.create :project, {
-  projectid: '1',
-  name: 'Get Chewie a Haircut',
-  projectcategory: 'Improve Wookie Hygene',
-  customerid: '1',
-  shampoo: 'true', # a custom field
-  blowdry: 'false' # a custom field
+request.create :PROJECT, {
+  PROJECTID: '1',
+  NAME: 'Get Chewie a Haircut',
+  PROJECTCATEGORY: 'Improve Wookie Hygene',
+  CUSTOMERID: '1',
+  SHAMPOO: 'true', # a custom field
+  BLOWDRY: 'false' # a custom field
 }
 
 request.send
 ```
+
+**Note:** Here ```:CUSTOMER```  and ```:PROJECT``` are object-types which are tagged just after the function tag `create` and are case-sensitive along with the extra-parameters(CUSTOMERID, FIRST_NAME ..)
 
 This will fire off a request that looks something like this:
 
@@ -76,6 +78,83 @@ This will fire off a request that looks something like this:
    </operation>
 </request>
 ```
+
+### Read Requests
+The read requests follow a slightly different pattern. The object-type is mentioned inside the object tag as seen here [Intacct List Vendors](https://developer.intacct.com/api/accounts-payable/vendors/#list-vendors). The following code will read all vendor objects.
+
+```ruby
+request = IntacctRuby::Request.new(REQUEST_OPTS)
+
+# Object-Type VENDOR is sent through extra-parameters and not as the first argument.
+request.readByQuery nil, {
+  object: 'VENDOR',
+  query: '',
+  fields: '*',
+  pagesize: 100
+}
+
+request.send
+```
+
+**Note:** Clean up the query argument before using it in readByQuery function as mentioned here [Intacct Illegal characters in XML](https://developer.intacct.com/web-services/queries/#illegal-characters-in-xml).
+          So, something like ```query: "BATCH_DATE > '02/14/2018'"```  should be  ```query: "BATCH_DATE &gt; '02/14/2018'"``` 
+ 
+
+
+
+This will fire off a request that looks something like this:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<request>
+   <control><!-- Authentication Params --></control>
+   <operation transaction="true">
+      <authentication><!-- Authentication Params --></authentication>
+      <content>
+         <function controlid="readByQuery-2017-08-03 17:02:40 UTC">
+            <readByQuery>
+                <object>VENDOR</object>
+                <fields>*</fields>
+                <query></query>
+                <pagesize>100</pagesize>
+            </readByQuery>
+         </function>
+      </content>
+   </operation>
+</request>
+```
+
+Similarly, for pagination use the ```readMore``` function as mentioned here [Intacct Paginate Results](https://developer.intacct.com/web-services/queries/#paginate-results)
+
+```ruby
+request = IntacctRuby::Request.new(REQUEST_OPTS)
+
+request.readMore nil, {
+  resultId: '7765623332WU1hh8CoA4QAAHxI9i8AAAAA5'
+}
+
+request.send
+```
+
+This will fire off a request that looks something like this:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<request>
+   <control><!-- Authentication Params --></control>
+   <operation transaction="true">
+      <authentication><!-- Authentication Params --></authentication>
+      <content>
+         <function controlid="readMore-2017-08-03 17:02:40 UTC">
+            <readMore>
+              <resultId>7765623332WU1hh8CoA4QAAHxI9i8AAAAA5</resultId>
+            </readMore>
+         </function>
+      </content>
+   </operation>
+</request>
+```
+
 If there are function errors (e.g. you omitted a required field) you'll see an error on response. Same if you see an internal server error, or any error outside of the 2xx range.
 
 ## Authentication
