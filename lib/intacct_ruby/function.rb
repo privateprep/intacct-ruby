@@ -9,6 +9,7 @@ module IntacctRuby
       readByQuery
       read
       readByName
+      readMore
       create
       update
       delete
@@ -27,7 +28,7 @@ module IntacctRuby
 
       xml.function controlid: controlid do
         xml.tag!(@function_type) do
-          xml.tag!(@object_type.upcase) do
+          xml.tag!(@object_type) do
             xml << argument_xml(@arguments)
           end
         end
@@ -50,7 +51,7 @@ module IntacctRuby
       xml = Builder::XmlMarkup.new
 
       arguments_to_convert.each do |key, value|
-        argument_key = key.to_s.upcase
+        argument_key = key.to_s
 
         xml.tag!(argument_key) do
           xml << argument_value_as_xml(value)
