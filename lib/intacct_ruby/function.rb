@@ -15,6 +15,8 @@ module IntacctRuby
       delete
     ).freeze
 
+    CU_TYPES = %w(create update).freeze
+
     def initialize(function_type, object_type, arguments = {})
       @function_type = function_type.to_s
       @object_type = object_type.to_s
@@ -28,7 +30,11 @@ module IntacctRuby
 
       xml.function controlid: controlid do
         xml.tag!(@function_type) do
-          xml.tag!(@object_type) do
+          if CU_TYPES.include?(@function_type)
+            xml.tag!(@object_type) do
+              xml << argument_xml(@arguments)
+            end
+          else
             xml << argument_xml(@arguments)
           end
         end
