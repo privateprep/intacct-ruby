@@ -37,11 +37,12 @@ describe Function do
       {
         some:           'argument',
         another:        'string',
-        nested_as_hash:         { nested_key: 'nested value' },
-        another_nested_as_hash: { another_key: 'another value' },
+        risky:          'risky&><argument',
+        nested_as_hash:         { nested_key: 'nested > value' },
+        another_nested_as_hash: { another_key: 'another < value' },
         nested_as_array: [
-          { first_key:  'first_value'  },
-          { second_key: 'second_value' }
+          { first_key:  'first_value <'  },
+          { second_key: 'second_value >' }
         ]
       }
     end
@@ -78,7 +79,7 @@ describe Function do
           )
 
           expect(xml_argument_value.first.children.to_s)
-            .to eq expected_value
+            .to eq expected_value.encode(xml: :text)
         end
       end
     end
@@ -98,7 +99,7 @@ describe Function do
               )
 
               expect(xml_inner_value.first.children.to_s)
-                .to eq inner_value
+                .to eq inner_value.encode(xml: :text)
             end
           end
         end
@@ -118,7 +119,7 @@ describe Function do
                 )
 
                 expect(xml_array_item_value.first.children.to_s)
-                  .to eq array_item_value
+                  .to eq array_item_value.encode(xml: :text)
               end
             end
           end

@@ -68,7 +68,7 @@ module IntacctRuby
       when Array
         argument_value_list_xml(value) # recursive case
       else
-        value.to_s # end case
+        value.to_s.encode(xml: :text) # end case
       end
     end
 
