@@ -84,24 +84,23 @@ This will fire off a request that looks something like this:
 
 ### Read Requests
 
-The read requests follow a slightly different pattern. The object-type is mentioned inside the object tag as seen here [Intacct List Vendors](https://developer.intacct.com/api/accounts-payable/vendors/#list-vendors). The following code will read all vendor objects.
+The read requests follow a slightly different pattern. The object-type is mentioned inside the object tag as seen here [Intacct List Journal Entries](https://developer.intacct.com/api/general-ledger/journal-entries/#list-journal-entry-lines). The following code will read all GLENTRY objects in a specific interval
+
+**Note:** The gem encodes the queries to a valid XML so that you don't have to. You can query using the `&, >, <` operators as seen below.
 
 ```ruby
 request = IntacctRuby::Request.new(REQUEST_OPTS)
 
-# Object-Type VENDOR is sent through extra-parameters and not as the first argument.
+# Object-Type GLENTRY is sent through extra-parameters and not as the first argument.
 request.readByQuery nil, {
-  object: 'VENDOR',
-  query: '',
+  object: 'GLENTRY',
+  query: "BATCH_DATE >= '03-01-2018' AND BATCH_DATE <= '03-15-2018'",
   fields: '*',
   pagesize: 100
 }
 
 request.send
 ```
-
-**Note:** Clean up the query argument before using it in readByQuery function as mentioned here [Intacct Illegal characters in XML](https://developer.intacct.com/web-services/queries/#illegal-characters-in-xml).
-So, something like `query: "BATCH_DATE > '02/14/2018'"` should be `query: "BATCH_DATE &gt; '02/14/2018'"`
 
 This will fire off a request that looks something like this:
 
@@ -114,9 +113,9 @@ This will fire off a request that looks something like this:
       <content>
          <function controlid="readByQuery-2017-08-03 17:02:40 UTC">
             <readByQuery>
-                <object>VENDOR</object>
+                <object>GLENTRY</object>
                 <fields>*</fields>
-                <query></query>
+                <query>BATCH_DATE &gt;= '03-01-2018' AND BATCH_DATE &lt;= '03-15-2018'</query>
                 <pagesize>100</pagesize>
             </readByQuery>
          </function>
