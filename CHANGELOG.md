@@ -1,3 +1,7 @@
+# 1.8.2 (March 20, 2018)
+
+* Fixup object_type nil bug for read requests ([@bezoar17](https://github.com/bezoar17) in [#16](https://github.com/privateprep/intacct-ruby/pull/16))
+
 # 1.8.1 (March 19, 2018)
 
 * Escape XML strings for requests as default ([@bezoar17](https://github.com/bezoar17) in [#17](https://github.com/privateprep/intacct-ruby/pull/17))
