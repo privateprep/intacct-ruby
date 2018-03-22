@@ -1,3 +1,4 @@
+
 [![Build Status](https://travis-ci.org/privateprep/intacct-ruby.svg?branch=master)](https://travis-ci.org/privateprep/intacct-ruby)
 
 # IntacctRuby
@@ -21,7 +22,7 @@ Let's say you want to create a project and a customer associated with that proje
 # for more information.
 request = IntacctRuby::Request.new(REQUEST_OPTS)
 
-request.create :CUSTOMER, {
+request.create object_type: :CUSTOMER, parameters: {
   CUSTOMERID: '1',
   FIRST_NAME: 'Han',
   LAST_NAME: 'Solo',
@@ -30,7 +31,7 @@ request.create :CUSTOMER, {
   STATUS: 'active'
 }
 
-request.create :PROJECT, {
+request.create object_type: :PROJECT, parameters: {
   PROJECTID: '1',
   NAME: 'Get Chewie a Haircut',
   PROJECTCATEGORY: 'Improve Wookie Hygene',
@@ -84,15 +85,15 @@ This will fire off a request that looks something like this:
 
 ### Read Requests
 
-The read requests follow a slightly different pattern. The object-type is mentioned inside the object tag as seen here [Intacct List Journal Entries](https://developer.intacct.com/api/general-ledger/journal-entries/#list-journal-entry-lines). The following code will read all GLENTRY objects in a specific interval
+The read requests follow a slightly different pattern. The object-type is mentioned inside the `object` tag as seen here [Intacct List Journal Entries](https://developer.intacct.com/api/general-ledger/journal-entries/#list-journal-entry-lines).  Hence, read requests don't accept a `object_type:` argument directly, the object type is passed through the parameters argument. The following code will read all GLENTRY objects in a specific interval
 
 **Note:** The gem encodes the queries to a valid XML so that you don't have to. You can query using the `&, >, <` operators as seen below.
 
 ```ruby
 request = IntacctRuby::Request.new(REQUEST_OPTS)
 
-# Object-Type GLENTRY is sent through extra-parameters and not as the first argument.
-request.readByQuery nil, {
+# Object-Type GLENTRY is sent through the parameters arguments 
+request.readByQuery parameters: {
   object: 'GLENTRY',
   query: "BATCH_DATE >= '03-01-2018' AND BATCH_DATE <= '03-15-2018'",
   fields: '*',
@@ -129,7 +130,7 @@ Similarly, for pagination use the `readMore` function as mentioned here [Intacct
 ```ruby
 request = IntacctRuby::Request.new(REQUEST_OPTS)
 
-request.readMore nil, {
+request.readMore parameters: {
   resultId: '7765623332WU1hh8CoA4QAAHxI9i8AAAAA5'
 }
 
@@ -257,7 +258,7 @@ Or install it yourself as:
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/jzornow/intacct-ruby/.
+Bug reports and pull requests are welcome on GitHub at https://github.com/privateprep/intacct-ruby/.
 
 This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
