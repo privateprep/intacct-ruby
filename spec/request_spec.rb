@@ -155,16 +155,16 @@ describe Request do
       context 'using dynamic function generation' do
         let(:object_type) { :object_type }
         let(:function_type) { :create }
-        let(:arguments) { { argument_1: 'value_1', argument_2: 'value_2' } }
+        let(:parameters) { { parameter_1: 'value_1', parameter_2: 'value_2' } }
         let(:request_xml) do
           request = Request.new(AUTHENTICATION_PARAMS)
-          request.public_send(function_type, object_type, arguments)
+          request.public_send(function_type, object_type: object_type, parameters: parameters)
 
           Nokogiri:: XML request.to_xml
         end
 
         it 'contains expected function xml' do
-          expected_function = Function.new function_type, object_type, arguments
+          expected_function = Function.new function_type, object_type: object_type, parameters: parameters
           expected_function_xml = Nokogiri::XML(expected_function.to_xml)
                                           .xpath('function') # strips xml header
 
