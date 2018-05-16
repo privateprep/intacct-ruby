@@ -13,11 +13,11 @@ module IntacctRuby
   class Response
     attr_reader :response_body
 
-    def initialize(xml_response)
-      @response_body = Nokogiri::XML(xml_response.body)
+    def initialize(http_response)
+      @response_body = Nokogiri::XML(http_response.body)
 
       # raises an error unless the response is in the 2xx range.
-      xml_response.value
+      http_response.value
 
       # in case the response is a success, but one of the included functions
       # failed and the transaction was rolled back
