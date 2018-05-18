@@ -1,3 +1,9 @@
+# 2.0.0 (May 18, 2018)
+
+* Use keyword-args ([@bezoar17](https://github.com/bezoar17) in [#20](https://github.com/privateprep/intacct-ruby/pull/20))
+* Renames param to reflect true nature ([@toddsiegel](https://github.com/toddsiegel) in [#21](https://github.com/privateprep/intacct-ruby/pull/21))
+* Cleans up dead code ([@danielpowell4](https://github.com/danielpowell4) in [#22](https://github.com/privateprep/intacct-ruby/pull/22))
+
 # 1.8.2 (March 20, 2018)
 
 * Fixup object_type nil bug for read requests ([@bezoar17](https://github.com/bezoar17) in [#16](https://github.com/privateprep/intacct-ruby/pull/16))
