@@ -17,14 +17,14 @@ describe Function do
       it 'creates a function without error' do
         type = Function::ALLOWED_TYPES.first
 
-        expect { Function.new(type, :objecttype, some: 'argument') }
+        expect { Function.new(type, object_type: :objecttype, parameters: {some: 'parameter'}) }
           .not_to raise_error
       end
     end
 
     context 'given an invalid function type' do
       it 'raises an error' do
-        expect { Function.new(:badtype, :objecttype, some: 'argument') }
+        expect { Function.new(:badtype, object_type: :objecttype, parameters: {some: 'parameter'}) }
           .to raise_error Exceptions::UnknownFunctionType
       end
     end
@@ -33,11 +33,11 @@ describe Function do
   describe :to_xml do
     let(:function_type) { :create }
     let(:object_type)   { :OBJECTTYPE }
-    let(:arguments) do
+    let(:parameters) do
       {
-        some:           'argument',
+        some:           'parameter',
         another:        'string',
-        risky:          'risky&><argument',
+        risky:          'risky&><parameter',
         nested_as_hash:         { nested_key: 'nested > value' },
         another_nested_as_hash: { another_key: 'another < value' },
         nested_as_array: [
@@ -47,7 +47,7 @@ describe Function do
       }
     end
 
-    let(:function)      { Function.new(function_type, object_type, arguments) }
+    let(:function)      { Function.new(function_type, object_type: object_type, parameters: parameters) }
     let(:xml)           { Nokogiri::XML function.to_xml }
 
     it 'has a controlid' do
@@ -67,27 +67,27 @@ describe Function do
         .to eq object_type.to_s.upcase
     end
 
-    context 'given non-nested arguments' do
-      it 'has function arguments as key/value pairs' do
-        arguments.select { |_, value| [String, Integer].include?(value.class) }
+    context 'given non-nested parameters' do
+      it 'has function parameters as key/value pairs' do
+        parameters.select { |_, value| [String, Integer].include?(value.class) }
                  .each do |key, expected_value|
           xml_object_key = to_xml_key object_type
-          xml_argument_key = to_xml_key key
+          xml_parameter_key = to_xml_key key
 
-          xml_argument_value = xml.xpath(
-            "//#{xml_object_key}/#{xml_argument_key}"
+          xml_parameter_value = xml.xpath(
+            "//#{xml_object_key}/#{xml_parameter_key}"
           )
 
-          expect(xml_argument_value.first.children.to_s)
+          expect(xml_parameter_value.first.children.to_s)
             .to eq expected_value.encode(xml: :text)
         end
       end
     end
 
-    context 'given nested arguments' do
-      context 'given that nested arguments are in hash' do
-        it 'converts those arguments to nested XML' do
-          arguments.select { |_, value| value.is_a? Hash }
+    context 'given nested parameters' do
+      context 'given that nested parameters are in hash' do
+        it 'converts those parameters to nested XML' do
+          parameters.select { |_, value| value.is_a? Hash }
                    .each do |key, nested_value|
             xml_object_key = to_xml_key object_type
             xml_outer_key = to_xml_key key
@@ -105,9 +105,9 @@ describe Function do
         end
       end
 
-      context 'given that those arguments are in an array' do
-        it 'converts those arguments to an XML list' do
-          arguments.select { |_, value| value.is_a? Array }
+      context 'given that those parameters are in an array' do
+        it 'converts those parameters to an XML list' do
+          parameters.select { |_, value| value.is_a? Array }
                    .each do |outer_key, array_body|
             xml_object_key = to_xml_key object_type
             xml_array_key = to_xml_key outer_key # key of XML Array

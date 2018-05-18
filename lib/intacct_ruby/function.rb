@@ -3,7 +3,7 @@ require 'intacct_ruby/exceptions/unknown_function_type'
 
 module IntacctRuby
   # a function to be sent to Intacct. Defined by a function type (e.g. :create),
-  # an object type, (e.g. :customer), and arguments.
+  # an object type, (e.g. :customer), and parameters.
   class Function
     ALLOWED_TYPES = %w(
       readByQuery
@@ -17,10 +17,10 @@ module IntacctRuby
 
     CU_TYPES = %w(create update).freeze
 
-    def initialize(function_type, object_type, arguments = {})
+    def initialize(function_type, object_type: nil, parameters: )
       @function_type = function_type.to_s
       @object_type = object_type.to_s
-      @arguments = arguments
+      @parameters = parameters
 
       validate_type!
     end
@@ -32,10 +32,10 @@ module IntacctRuby
         xml.tag!(@function_type) do
           if CU_TYPES.include?(@function_type)
             xml.tag!(@object_type) do
-              xml << argument_xml(@arguments)
+              xml << parameter_xml(@parameters)
             end
           else
-            xml << argument_xml(@arguments)
+            xml << parameter_xml(@parameters)
           end
         end
       end
@@ -53,36 +53,36 @@ module IntacctRuby
       "#{@function_type}-#{@object_type}-#{timestamp}"
     end
 
-    def argument_xml(arguments_to_convert)
+    def parameter_xml(parameters_to_convert)
       xml = Builder::XmlMarkup.new
 
-      arguments_to_convert.each do |key, value|
-        argument_key = key.to_s
+      parameters_to_convert.each do |key, value|
+        parameter_key = key.to_s
 
-        xml.tag!(argument_key) do
-          xml << argument_value_as_xml(value)
+        xml.tag!(parameter_key) do
+          xml << parameter_value_as_xml(value)
         end
       end
 
       xml.target!
     end
 
-    def argument_value_as_xml(value)
+    def parameter_value_as_xml(value)
       case value
       when Hash
-        argument_xml(value) # recursive case
+        parameter_xml(value) # recursive case
       when Array
-        argument_value_list_xml(value) # recursive case
+        parameter_value_list_xml(value) # recursive case
       else
         value.to_s.encode(xml: :text) # end case
       end
     end
 
-    def argument_value_list_xml(array_of_hashes)
+    def parameter_value_list_xml(array_of_hashes)
       xml = Builder::XmlMarkup.new
 
-      array_of_hashes.each do |argument_hash|
-        xml << argument_xml(argument_hash)
+      array_of_hashes.each do |parameter_hash|
+        xml << parameter_xml(parameter_hash)
       end
 
       xml.target!
