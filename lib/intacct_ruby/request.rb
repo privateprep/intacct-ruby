@@ -28,6 +28,11 @@ module IntacctRuby
       :user_password
     ].freeze
 
+    REQUIRED_SESSION_AUTHENTICATION_KEYS = [
+      :sessionid
+    ].freeze
+
+
     def initialize(*functions, request_params)
       # request_params should contain all req'd authentication information. If
       # not, an error will be thrown on #send
@@ -84,7 +89,13 @@ module IntacctRuby
     end
 
     def validate_keys!
-      missing_keys = REQUIRED_AUTHENTICATION_KEYS - @opts.keys
+      required_authentication_keys_for_scope = if @opts.keys.include?(:sessionid)
+                                                 REQUIRED_SESSION_AUTHENTICATION_KEYS
+                                               else
+                                                 REQUIRED_AUTHENTICATION_KEYS
+                                               end
+
+      missing_keys = required_authentication_keys_for_scope - @opts.keys
 
       unless missing_keys.empty?
         missing_keys.map! { |s| ":#{s}" } # so they appear as symbols in output
@@ -116,10 +127,15 @@ module IntacctRuby
 
     def authentication_block
       @request.authentication do
-        @request.login do
-          @request.userid    @opts[:userid]
-          @request.companyid @opts[:companyid]
-          @request.password  @opts[:user_password]
+        if @opts[:sessionid]
+          @request.sessionid @opts[:sessionid]
+        else
+          @request.login do
+            @request.userid     @opts[:userid]
+            @request.companyid  @opts[:companyid]
+            @request.password   @opts[:user_password]
+            @request.locationid @opts[:locationid]
+          end
         end
       end
     end
