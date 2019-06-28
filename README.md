@@ -200,6 +200,37 @@ REQUEST_OPTS = {
 IntacctRuby::Request.new(REQUEST_OPTS)
 ```
 
+### Authentication via Session
+It is also possible to authenticate via a `sessionid`. To this end, you use the authentication method from above to send a request to the getAPISession endpoint with either no parameters or a `locationid` parameter to scope the session to a particular entity level.
+
+The response from this action will hold a `sessionid` key that you use in lieu of the normal request options described above.
+
+```ruby
+REQUEST_OPTS = {
+  senderid:        'some_senderid_value',
+  sender_password: 'some_sender_password_value',
+  userid:          'some_userid_value',
+  companyid:       'some_companyid_value',
+  user_password:   'some_user_password_value'
+}.freeze
+
+request = IntacctRuby::Request.new(REQUEST_OPTS)
+
+request.getAPISession object: nil, parameters {
+  locationid: "1"
+}
+
+session_id = request.send
+                    .response_body
+                    .xpath(//sessionid)
+                    .text
+#=> "O2s21v0WX4Q8LFhV_Qe_Sg3ihD0sWA.."
+
+request = IntacctRuby::Request.new(sessionid: session_id)
+```
+
+### Authentication via Session Example:
+
 ### Important Notes on Authentication
 
 #### These Are Required!
