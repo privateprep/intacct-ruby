@@ -83,6 +83,76 @@ This will fire off a request that looks something like this:
 </request>
 ```
 
+### Legacy Endpoints
+
+The Intacct team has deprecated a number of endpoints which are now only accessible via the legacy API. This API has a different expectation on XML body syntax as well as parameter order enforcement via XSD. The process to construct a legacy request is similar to a standard request, just using the `LegacyRequest` class.
+
+```ruby
+request = IntacctRuby::LegacyRequest.new(REQUEST_OPTS)
+
+request.create object_type: :record_cctransaction, parameters: {
+  chargecardid: '1',
+  paymentdate: { year: 2019, month: 11, day: 11 },
+  ccpayitems: [
+    cpayitem: {
+      glaccountno: 1234,
+      paymentamount: '0.99',
+      locationid: 1,
+    }
+  ]
+}
+
+request.create object_type: :reverse_cctransaction, parameters: {
+  key: '4321',
+  datereversed: { year: 2019, month: 11, day: 11 },
+  memo: 'Purchase returned for refund'
+}
+
+request.send
+```
+
+The legacy request class will generate XML that looks something like this.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<request>
+   <control><!-- Authentication Params --></control>
+   <operation transaction="true">
+      <authentication><!-- Authentication Params --></authentication>
+      <content>
+         <function controlid="create-record_cctransaction-2019-06-30 16:45:12 UTC">
+            <record_cctransaction>
+               <chargecardid>1</chargecardid>
+               <paymentdate>
+                  <year>2019</year>
+                  <month>11</month>
+                  <day>11</day>
+               </paymentdate>
+               <ccpayitems>
+                  <ccpayitem>
+                     <glaccountno>1234</glaccountno>,
+                     <paymentamount>'0.99'</paymentamount>
+                     <locationid>1</locationid>
+                  </ccpayitem>
+               </ccpayitems>
+            </record_cctransaction>
+         </function>
+         <function controlid="create-reverse_cctransaction-2019-06-30 16:45:12 UTC">
+            <reverse_cctransaction>
+               <key>4321</key>
+               <datereversed>
+                  <year>2019</year>
+                  <month>11</month>
+                  <day>11</day>
+               </datereversed>
+               <memo>Purchase returned for refund</memo>
+            </reverse_cctransaction>
+         </function>
+      </content>
+   </operation>
+</request>
+```
+
 ### Read Requests
 
 The read requests follow a slightly different pattern. The object-type is mentioned inside the `object` tag as seen here [Intacct List Journal Entries](https://developer.intacct.com/api/general-ledger/journal-entries/#list-journal-entry-lines).  Hence, read requests don't accept a `object_type:` argument directly, the object type is passed through the parameters argument. The following code will read all GLENTRY objects in a specific interval
@@ -92,7 +162,7 @@ The read requests follow a slightly different pattern. The object-type is mentio
 ```ruby
 request = IntacctRuby::Request.new(REQUEST_OPTS)
 
-# Object-Type GLENTRY is sent through the parameters arguments 
+# Object-Type GLENTRY is sent through the parameters arguments
 request.readByQuery parameters: {
   object: 'GLENTRY',
   query: "BATCH_DATE >= '03-01-2018' AND BATCH_DATE <= '03-15-2018'",
