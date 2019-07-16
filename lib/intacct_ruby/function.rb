@@ -12,7 +12,8 @@ module IntacctRuby
       readMore
       create
       update
-      delete
+      delete,
+      get_araging
     ).freeze
 
     CU_TYPES = %w(create update).freeze
