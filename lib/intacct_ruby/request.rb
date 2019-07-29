@@ -54,18 +54,13 @@ module IntacctRuby
       end
     end
 
-    def send(opts = {})
-      if opts.is_a? Hash
-        api = opts[:api] || Api.new
+    def send!(opts = {})
+      api = opts[:api] || Api.new
 
-        validate_keys!
-        validate_functions!
+      validate_keys!
+      validate_functions!
 
-        Response.new api.send_request(self)
-      else
-        # so that Request#send can play nice alongside Object#send
-        super
-      end
+      Response.new api.send_request(self)
     end
 
     private
