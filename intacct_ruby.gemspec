@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-# stub: intacct_ruby 2.0.0 ruby lib
+# stub: intacct_ruby 2.1.0 ruby lib
 
 Gem::Specification.new do |s|
   s.name = "intacct_ruby".freeze
