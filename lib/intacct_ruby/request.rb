@@ -120,6 +120,7 @@ module IntacctRuby
           @request.userid    @opts[:userid]
           @request.companyid @opts[:companyid]
           @request.password  @opts[:user_password]
+          @request.locationid @opts[:locationid]
         end
       end
     end
