@@ -1,0 +1,37 @@
+{
+  "key": null,
+  "paymentdate": {
+    "year": null,
+    "month": null,
+    "day": null
+  },
+  "referenceno": null,
+  "payee": null,
+  "description": null,
+  "supdocid": null,
+  "currency": null,
+  "exchratedate": null,
+  "exchratetype": null,
+  "exchrate": null,
+  "updateccpayitems": [
+    {
+      "updateccpayitem": {
+        "line_num": null,
+        "glaccountno": null,
+        "accountlabel": null,
+        "description": null,
+        "paymentamount": null,
+        "departmentid": null,
+        "locationid": null,
+        "customerid": null,
+        "vendorid": null,
+        "employeeid": null,
+        "projectid": null,
+        "itemid": null,
+        "classid": null,
+        "contractid": null,
+        "warehouseid": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "object": null,
+  "start": null,
+  "maxitems": null,
+  "showprivate": null,
+  "filter": {
+    "logical": {
+      "logical_operator": null,
+      "object": null
+    },
+    "expression": {
+      "field": null,
+      "operator:": null,
+      "value": null
+    }
+  },
+  "sorts": [
+    {
+      "sortfield": [
+        {
+          "order": null
+        }
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "field": null
+    }
+  ]
+}

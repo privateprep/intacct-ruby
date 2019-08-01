@@ -1,0 +1,11 @@
+{
+  "reverse_cctransaction": {
+    "key": null,
+    "datereversed": {
+      "year": null,
+      "month": null,
+      "day": null
+    },
+    "memo": null
+  }
+}
