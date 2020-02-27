@@ -6,9 +6,10 @@ module IntacctRuby
   # an object type, (e.g. :customer), and parameters.
   class Function
     ALLOWED_TYPES = %w(
-      readByQuery
       read
       readByName
+      readByQuery
+      readEntityDetails
       readMore
       create
       update
