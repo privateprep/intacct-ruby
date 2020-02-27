@@ -1,6 +1,11 @@
 # Unreleased
 
 * Get CI Passing ([@danielpowell4](https://github.com/danielpowell4) in [#22](https://github.com/privateprep/intacct-ruby/pull/33))
+* Changes ruby support ([@danielpowell4](https://github.com/danielpowell4) in [#34](https://github.com/privateprep/intacct-ruby/pull/34)
+* Adds legacy support ([@lifeBCE](https://github.com/lifeBCE)) in ([CloudsnapInc#1](https://github.com/CloudsnapInc/intacct-ruby/pull/1))
+* Allows for locationid in header ([reginad1](https://github.com/reginad1)) in ([CloudsnapInc#2](https://github.com/CloudsnapInc/intacct-ruby/pull/2))
+* Provides for ordering in legacy requests ([@reginad1](https://github.com/reginad1)) in ([CloudsnapInc#4](https://github.com/CloudsnapInc/intacct-ruby/pull/4))
+* Optional keys in legacy endpoints ([@draycox](https://github.com/draycox)) in ([CloudsnapInc#6](https://github.com/CloudsnapInc/intacct-ruby/pull/6))
 
 # 2.0.0 (May 18, 2018)
 
