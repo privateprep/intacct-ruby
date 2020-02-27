@@ -11,7 +11,8 @@ module IntacctRuby
       end unless attributes.empty?
 
       # Find the duplicate keys
-      duplicate = @parameters.deep_dup
+      # the `#send` is here so that we can keep this method private
+      duplicate = self.class.send(:deep_copy, @parameters)
       omitted_keys = []
 
       duplicate.each do |key, value|
@@ -52,6 +53,22 @@ module IntacctRuby
       end
 
       xml.target!
+    end
+
+    # Produces a deep copy of the given object
+    # similar to deep_dup in active_support
+    private_class_method def self.deep_copy(obj)
+      case obj
+      when Array
+        obj.map { |e| deep_copy(e) }
+      when Hash
+        obj.each_with_object({}) do |(k, v), copy|
+          copy[k] = deep_copy(v)
+          copy
+        end
+      else
+        obj
+      end
     end
 
   end
