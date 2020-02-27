@@ -153,6 +153,8 @@ The legacy request class will generate XML that looks something like this.
 </request>
 ```
 
+If you are getting compliants about the ordering of parameters see `IntacctRuby::LegacyRequest#order_params`.
+
 ### Read Requests
 
 The read requests follow a slightly different pattern. The object-type is mentioned inside the `object` tag as seen here [Intacct List Journal Entries](https://developer.intacct.com/api/general-ledger/journal-entries/#list-journal-entry-lines).  Hence, read requests don't accept a `object_type:` argument directly, the object type is passed through the parameters argument. The following code will read all GLENTRY objects in a specific interval
