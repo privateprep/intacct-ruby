@@ -15,6 +15,7 @@ module IntacctRuby
       delete
       getAPISession
       create_potransaction
+      create_supdoc
     ).freeze
 
     CU_TYPES = %w(create update).freeze
