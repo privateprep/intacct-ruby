@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.version               = IntacctRuby::VERSION
   spec.authors               = ['Jeremy Zornow', 'Dan Powell']
   spec.email                 = ['jeremy@zornow.com', 'dan.powell@privateprep.com']
-  spec.required_ruby_version = '>= 2.2.0'
+  spec.required_ruby_version = '>= 2.6.0'
   spec.summary               = 'A Ruby wrapper for the Intacct API'
   spec.description           = 'Allows for multi-function API calls, the ' \
                                'addition of custom fields, and more. All in ' \
