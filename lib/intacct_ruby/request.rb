@@ -49,8 +49,8 @@ module IntacctRuby
       end
     end
 
-    def send(opts = {})
-      if opts.is_a? Hash
+    def send(*args, **opts)
+      if args.empty?
         api = opts[:api] || Api.new
 
         validate_keys!
@@ -65,11 +65,10 @@ module IntacctRuby
 
     private
 
-    def method_missing(method_name, *arguments, &block)
+    def method_missing(method_name, *args, **opts, &block)
       super unless Function::ALLOWED_TYPES.include? method_name.to_s
 
-      # object_type must be the first argument in arguments
-      @functions << Function.new(method_name, arguments.shift, *arguments)
+      @functions << Function.new(method_name, object_type: args.first, **opts)
     end
 
     def respond_to_missing?(method_name, include_private = false)
