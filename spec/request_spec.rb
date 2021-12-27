@@ -20,7 +20,7 @@ AUTHENTICATION_PARAMS = {
   user_password: 'user_password_value'
 }.freeze
 
-def generate_request_xml(request_param_overrides = {})
+def generate_request_xml(**request_param_overrides)
   @request_xml ||= begin
     Nokogiri::XML Request.new(
       *function_stubs,
@@ -205,7 +205,7 @@ describe Request do
             includewhitespace: 'includewhitespace override'
           }
 
-          generate_request_xml(overrides)
+          generate_request_xml(**overrides)
 
           overrides.each do |field_name, field_value|
             request_value = get_value_from control_block_xml, field_name.to_s
