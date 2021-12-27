@@ -46,7 +46,7 @@ class ResponseFactory
     xml.target!
   end
 
-  def self.control_block(overrides = {})
+  def self.control_block(**overrides)
     attributes = CONTROL_BLOCK_DEFAULTS.dup.merge(overrides)
     xml = Builder::XmlMarkup.new
 
@@ -64,7 +64,7 @@ class ResponseFactory
     sessiontimestamp: '2017-01-27T09:09:31-08:00'
   }.freeze
 
-  def self.authentication_block(overrides = {})
+  def self.authentication_block(**overrides)
     attributes = AUTHENTICATION_BLOCK_DEFAULTS.dup.merge(overrides)
     xml = Builder::XmlMarkup.new
 
@@ -81,7 +81,7 @@ class ResponseFactory
     controlid: 'some_control_id'
   }.freeze
 
-  def self.success_result_block(overrides = {})
+  def self.success_result_block(**overrides)
     attributes = RESULT_BLOCK_DEFAULTS.dup.merge(overrides)
     attributes[:key] ||= 'some_key'
 
@@ -94,7 +94,7 @@ class ResponseFactory
     xml.target!
   end
 
-  def self.error_result_block(errors, overrides = {})
+  def self.error_result_block(errors, **overrides)
     attributes = RESULT_BLOCK_DEFAULTS.dup.merge(overrides)
     attributes[:errormessage] = errormessage_block(errors)
   end
