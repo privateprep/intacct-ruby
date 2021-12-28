@@ -13,9 +13,13 @@ module IntacctRuby
       create
       update
       delete
+      lookup
+      query
     ).freeze
 
     CU_TYPES = %w(create update).freeze
+
+    attr_reader :function_type, :object_type, :parameters
 
     def initialize(function_type, object_type: nil, parameters: )
       @function_type = function_type.to_s
@@ -29,13 +33,14 @@ module IntacctRuby
       xml = Builder::XmlMarkup.new
 
       xml.function controlid: controlid do
-        xml.tag!(@function_type) do
-          if CU_TYPES.include?(@function_type)
-            xml.tag!(@object_type) do
-              xml << parameter_xml(@parameters)
+        xml.tag!(function_type) do
+          if CU_TYPES.include?(function_type)
+            xml.tag!(object_type) do
+              xml << parameter_xml(parameters)
             end
           else
-            xml << parameter_xml(@parameters)
+            xml.object(object_type) if object_type.present?
+            xml << parameter_xml(parameters)
           end
         end
       end
@@ -50,7 +55,7 @@ module IntacctRuby
     end
 
     def controlid
-      "#{@function_type}-#{@object_type}-#{timestamp}"
+      "#{function_type}-#{object_type}-#{timestamp}"
     end
 
     def parameter_xml(parameters_to_convert)
@@ -89,9 +94,9 @@ module IntacctRuby
     end
 
     def validate_type!
-      unless ALLOWED_TYPES.include?(@function_type)
+      unless ALLOWED_TYPES.include?(function_type)
         raise Exceptions::UnknownFunctionType,
-              "Type #{@object_type} not recognized. Function Type must be " \
+              "Type #{object_type} not recognized. Function Type must be " \
               "one of #{ALLOWED_TYPES}."
       end
     end
