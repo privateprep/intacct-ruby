@@ -13,6 +13,8 @@ module IntacctRuby
       create
       update
       delete
+      lookup
+      query
     ).freeze
 
     CU_TYPES = %w(create update).freeze
