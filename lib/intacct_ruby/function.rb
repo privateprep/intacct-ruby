@@ -39,6 +39,7 @@ module IntacctRuby
               xml << parameter_xml(parameters)
             end
           else
+            xml.object(object_type) if object_type.present?
             xml << parameter_xml(parameters)
           end
         end
