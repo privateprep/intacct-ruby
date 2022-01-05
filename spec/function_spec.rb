@@ -1,36 +1,29 @@
-require 'spec_helper'
-require 'mocha/api'
-require 'nokogiri'
-
-require 'intacct_ruby/function'
-require 'intacct_ruby/exceptions/unknown_function_type'
-
-include IntacctRuby
+# frozen_string_literal: true
 
 def to_xml_key(symbol)
   symbol.to_s
 end
 
-describe Function do
-  describe :initialize do
+RSpec.describe IntacctRuby::Function do
+  describe '#initialize' do
     context 'given a valid function type' do
       it 'creates a function without error' do
-        type = Function::ALLOWED_TYPES.first
+        type = described_class::ALLOWED_TYPES.first
 
-        expect { Function.new(type, object_type: :objecttype, parameters: {some: 'parameter'}) }
+        expect { described_class.new(type, object_type: :objecttype, parameters: {some: 'parameter'}) }
           .not_to raise_error
       end
     end
 
     context 'given an invalid function type' do
       it 'raises an error' do
-        expect { Function.new(:badtype, object_type: :objecttype, parameters: {some: 'parameter'}) }
-          .to raise_error Exceptions::UnknownFunctionType
+        expect { described_class.new(:badtype, object_type: :objecttype, parameters: {some: 'parameter'}) }
+          .to raise_error IntacctRuby::Exceptions::UnknownFunctionType
       end
     end
   end
 
-  describe :to_xml do
+  describe '#to_xml' do
     let(:function_type) { :create }
     let(:object_type)   { :OBJECTTYPE }
     let(:parameters) do
@@ -47,7 +40,7 @@ describe Function do
       }
     end
 
-    let(:function)      { Function.new(function_type, object_type: object_type, parameters: parameters) }
+    let(:function)      { described_class.new(function_type, object_type: object_type, parameters: parameters) }
     let(:xml)           { Nokogiri::XML function.to_xml }
 
     it 'has a controlid' do

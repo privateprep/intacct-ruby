@@ -1,12 +1,6 @@
-require 'intacct_ruby/response'
-require 'intacct_ruby/exceptions/function_failure_exception'
-require 'builder'
-require 'response_factory'
-require 'net/http'
+# frozen_string_literal: true
 
-include IntacctRuby
-
-describe Response do
+RSpec.describe IntacctRuby::Response do
   context 'given a 2xx-range response' do
     context 'given successful transactions' do
       let(:response) do
@@ -16,21 +10,21 @@ describe Response do
         end
       end
 
-      describe :create do
+      describe '#initialize' do
         it 'throws no runtime errors' do
-          expect { Response.new(response) }.not_to raise_error
+          expect { described_class.new(response) }.not_to raise_error
         end
       end
 
-      describe :function_errors do
+      describe '#function_errors' do
         it 'shows no function errors' do
-          expect(Response.new(response).function_errors).to be_empty
+          expect(described_class.new(response).function_errors).to be_empty
         end
       end
     end
 
     context 'given unsuccessful transactions' do
-      describe :create do
+      describe '#initialize' do
         function_errors = %w(error1 error2)
         response_body = ResponseFactory.generate_with_errors(function_errors)
 
@@ -42,9 +36,9 @@ describe Response do
         end
 
         it 'raises FunctionFailureException on invocation' do
-          expect { Response.new(response) }
+          expect { described_class.new(response) }
             .to raise_error(
-              Exceptions::FunctionFailureException,
+              IntacctRuby::Exceptions::FunctionFailureException,
               function_errors.join("\n")
             )
         end
@@ -62,9 +56,9 @@ describe Response do
       end
     end
 
-    describe :create do
+    describe '#initialize' do
       it 'raises an error on instantiation' do
-        expect { Response.new(response) }.to raise_error(exception)
+        expect { described_class.new(response) }.to raise_error(exception)
       end
     end
   end

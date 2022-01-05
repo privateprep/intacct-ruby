@@ -1,5 +1,4 @@
-require 'builder'
-require 'mocha/api'
+# frozen_string_literal: true
 
 # for generating responses to be used in testing
 class ResponseFactory

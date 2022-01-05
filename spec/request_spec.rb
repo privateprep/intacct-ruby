@@ -1,14 +1,4 @@
-require 'spec_helper'
-require 'mocha/api'
-require 'nokogiri'
-
-require 'intacct_ruby/request'
-require 'intacct_ruby/function'
-require 'intacct_ruby/response'
-require 'intacct_ruby/exceptions/insufficient_credentials_exception'
-require 'intacct_ruby/exceptions/empty_request_exception'
-
-include IntacctRuby
+# frozen_string_literal: true
 
 # For all ENVs in this format:
 # xml_key represents the key associated with each ENV in the request produced
@@ -22,7 +12,7 @@ AUTHENTICATION_PARAMS = {
 
 def generate_request_xml(**request_param_overrides)
   @request_xml ||= begin
-    Nokogiri::XML Request.new(
+    Nokogiri::XML IntacctRuby::Request.new(
       *function_stubs,
       AUTHENTICATION_PARAMS.merge(request_param_overrides)
     ).to_xml
@@ -49,16 +39,16 @@ def function_stubs
   end
 end
 
-describe Request do
-  describe :send do
+RSpec.describe IntacctRuby::Request do
+  describe '#send' do
     it 'sends request through the API' do
-      request = Request.new(*function_stubs, AUTHENTICATION_PARAMS)
+      request = described_class.new(*function_stubs, AUTHENTICATION_PARAMS)
       response = mock('IntacctRuby::Response')
 
       api_spy = mock('IntacctRuby::Api')
       api_spy.expects(:send_request).with(request).returns(response)
 
-      Response.expects(:new).with(response)
+      IntacctRuby::Response.expects(:new).with(response)
 
       request.send(api: api_spy)
     end
@@ -68,9 +58,9 @@ describe Request do
         incomplete_params = AUTHENTICATION_PARAMS.dup
         incomplete_params.delete(omitted_key)
 
-        request = Request.new(*function_stubs, incomplete_params)
+        request = described_class.new(*function_stubs, incomplete_params)
 
-        expected_error = Exceptions::InsufficientCredentialsException
+        expected_error = IntacctRuby::Exceptions::InsufficientCredentialsException
         expected_message = Regexp.new(
           "\\[:#{omitted_key}\\] required for a valid request."
         )
@@ -81,14 +71,14 @@ describe Request do
     end
 
     it 'raises an error if no functions are provided' do
-      request = Request.new(*[], AUTHENTICATION_PARAMS)
+      request = described_class.new(*[], AUTHENTICATION_PARAMS)
 
       expect { request.send }
-        .to raise_error(Exceptions::EmptyRequestException)
+        .to raise_error(IntacctRuby::Exceptions::EmptyRequestException)
     end
 
     it 'behaves like Object#send if a symbol is provided' do
-      request = Request.new(*function_stubs, AUTHENTICATION_PARAMS)
+      request = described_class.new(*function_stubs, AUTHENTICATION_PARAMS)
 
       expect(request.send(:to_xml))
         .to eq request.to_xml
@@ -157,14 +147,14 @@ describe Request do
         let(:function_type) { :create }
         let(:parameters) { { parameter_1: 'value_1', parameter_2: 'value_2' } }
         let(:request_xml) do
-          request = Request.new(AUTHENTICATION_PARAMS)
+          request = described_class.new(AUTHENTICATION_PARAMS)
           request.public_send(function_type, object_type: object_type, parameters: parameters)
 
           Nokogiri:: XML request.to_xml
         end
 
         it 'contains expected function xml' do
-          expected_function = Function.new function_type, object_type: object_type, parameters: parameters
+          expected_function = IntacctRuby::Function.new function_type, object_type: object_type, parameters: parameters
           expected_function_xml = Nokogiri::XML(expected_function.to_xml)
                                           .xpath('function') # strips xml header
 
@@ -180,7 +170,7 @@ describe Request do
       describe 'control block' do
         it 'contains default values' do
           %i(uniqueid dtdversion includewhitespace).each do |field_name|
-            expected_value = Request::DEFAULTS[field_name].to_s
+            expected_value = described_class::DEFAULTS[field_name].to_s
             actual_value = get_value_from control_block_xml, field_name.to_s
 
             expect(expected_value).to eq actual_value
@@ -191,7 +181,7 @@ describe Request do
       describe 'operation block' do
         it 'shows transaction default' do
           expect(operation_block_xml.first.attributes['transaction'].value)
-            .to eq Request::DEFAULTS[:transaction].to_s
+            .to eq described_class::DEFAULTS[:transaction].to_s
         end
       end
     end

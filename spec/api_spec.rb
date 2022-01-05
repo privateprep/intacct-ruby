@@ -1,8 +1,7 @@
-require 'spec_helper'
-require 'intacct_ruby/api'
+# frozen_string_literal: true
 
-describe IntacctRuby::Api do
-  describe :send_request do
+RSpec.describe IntacctRuby::Api do
+  describe '#send_request' do
     it 'sends a request via HTTPS' do
       request_xml = '<xml>some xml</xml>'
 
@@ -18,7 +17,7 @@ describe IntacctRuby::Api do
       http_gateway_spy.expects(:use_ssl=).with true
       http_gateway_spy.expects(:request).with post_request_spy
 
-      Api.new(http_gateway_spy).send_request(request, post_request_spy)
+      IntacctRuby::Api.new(http_gateway_spy).send_request(request, post_request_spy)
     end
   end
 end
