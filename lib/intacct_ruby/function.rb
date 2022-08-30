@@ -7,6 +7,7 @@ module IntacctRuby
   class Function
     ALLOWED_TYPES = %w(
       readByQuery
+      query
       read
       readByName
       readMore
