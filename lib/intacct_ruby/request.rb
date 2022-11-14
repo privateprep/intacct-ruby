@@ -96,10 +96,6 @@ module IntacctRuby
       end
     end
 
-    def timestamp
-      @timestamp ||= Time.now.utc.to_s
-    end
-
     def control_block
       @request.control do
         @request.senderid @opts[:senderid]
@@ -107,7 +103,7 @@ module IntacctRuby
 
         # As recommended by Intacct API reference. This ID should be unique
         # to the call: it's used to associate a response with a request.
-        @request.controlid          timestamp
+        @request.controlid          SecureRandom.uuid
         @request.uniqueid           @opts[:uniqueid]
         @request.dtdversion         @opts[:dtdversion]
         @request.includewhitespace  @opts[:includewhitespace]

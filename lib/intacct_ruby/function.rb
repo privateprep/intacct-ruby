@@ -1,5 +1,6 @@
 require 'builder'
 require 'intacct_ruby/exceptions/unknown_function_type'
+require 'securerandom'
 
 module IntacctRuby
   # a function to be sent to Intacct. Defined by a function type (e.g. :create),
@@ -46,12 +47,8 @@ module IntacctRuby
 
     private
 
-    def timestamp
-      @timestamp ||= Time.now.utc.to_s
-    end
-
     def controlid
-      "#{@function_type}-#{@object_type}-#{timestamp}"
+      "#{@function_type}-#{@object_type}-#{SecureRandom.uuid}"
     end
 
     def parameter_xml(parameters_to_convert)

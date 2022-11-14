@@ -20,6 +20,8 @@ AUTHENTICATION_PARAMS = {
   user_password: 'user_password_value'
 }.freeze
 
+UUID_REGEX = /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/
+
 def generate_request_xml(request_param_overrides = {})
   @request_xml ||= begin
     Nokogiri::XML Request.new(
@@ -114,8 +116,8 @@ describe Request do
 
         controlid = get_value_from control_block_xml, 'controlid'
 
-        # if controlid is not a valid datetime string, this will blow up
-        expect { DateTime.parse(controlid) }.not_to raise_error
+        # if controlid is not a valid uuid string, this will blow up
+        expect(controlid).to match(UUID_REGEX)
       end
     end
 
@@ -164,6 +166,7 @@ describe Request do
         end
 
         it 'contains expected function xml' do
+          SecureRandom.stubs(:uuid).returns('some-uuid')
           expected_function = Function.new function_type, object_type: object_type, parameters: parameters
           expected_function_xml = Nokogiri::XML(expected_function.to_xml)
                                           .xpath('function') # strips xml header
