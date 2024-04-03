@@ -1,3 +1,7 @@
+# Important
+
+## As of April 2024, this repository is no longer being maintained by privateprep and is archived. If you'd like to fork it and use in your own projects, go ahead! 
+
 
 [![Build Status](https://travis-ci.org/privateprep/intacct-ruby.svg?branch=master)](https://travis-ci.org/privateprep/intacct-ruby)
 
